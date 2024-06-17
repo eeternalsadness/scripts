@@ -1,3 +1,11 @@
+## Prerequisites
+
+- fzf
+- curl
+- jq
+
+## Usage
+
 Add the following to your .bashrc or .zshrc file. Make sure to update the token as necessary.
 
 ```
