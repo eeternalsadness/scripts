@@ -55,6 +55,26 @@ get_all_user_branches_in_project() {
     echo "${branches[*]}"
 }
 
+get_all_dangling_branches_in_project() {
+    local project_id=$1
+    local branches=($2)
+    local page=1
+    local items_per_page=100
+
+    local dangling_branches=()
+    for branch in ${branches[@]}; do
+        open_mr_for_branch=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+            "https://$GITLAB_HOST/api/v4/projects/${project_id}/merge_requests?scope=created_by_me&state=opened&source_branch=$branch")
+
+        echo $open_mr_for_branch
+        if [ "$open_mr_for_branch" == "[]" ]; then
+            dangling_branches+=("$branch")
+        fi
+    done
+
+    echo ${dangling_branches[*]}
+}
+
 get_open_mrs() {
     curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         "https://$GITLAB_HOST/api/v4/merge_requests?state=opened" | jq -r '.[] | select(.target_branch == "master")}'
@@ -78,4 +98,6 @@ for project_id in ${project_ids[@]}; do
     echo "$project_id"
     branches=($(get_all_user_branches_in_project $project_id $user_email))
     echo "${branches[@]}"
+    dangling_branches=($(get_all_dangling_branches_in_project $project_id ${branches[*]}))
+    echo ${dangling_branches[@]}
 done
