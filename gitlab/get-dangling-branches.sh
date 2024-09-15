@@ -11,19 +11,20 @@ get_all_project_ids() {
     local page=1
     local items_per_page=100
 
-    local project_ids=()
-    while true; do
-        result=($(list_projects $page $items_per_page | jq -r '.[].id'))
+    local project_ids="[]"
 
-        if [ "${#result}" -eq 0 ]; then
+    while true; do
+        result=$(list_projects $page $items_per_page | jq -r '[.[] | {id: .id, name_with_namespace: .name_with_namespace}]')
+
+        if [ "$result" == "[]" ]; then
             break
         fi
 
-        project_ids+=("${result[@]}")
+        project_ids=$(jq -n --argjson a "$project_ids" --argjson b "$result" '$a + $b')
         ((page++))
     done
 
-    echo "${project_ids[*]}"
+    echo "$project_ids"
 }
 
 list_branches() {
@@ -66,7 +67,6 @@ get_all_dangling_branches_in_project() {
         open_mr_for_branch=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
             "https://$GITLAB_HOST/api/v4/projects/${project_id}/merge_requests?scope=created_by_me&state=opened&source_branch=$branch")
 
-        echo $open_mr_for_branch
         if [ "$open_mr_for_branch" == "[]" ]; then
             dangling_branches+=("$branch")
         fi
@@ -90,14 +90,22 @@ get_user_id() {
         "https://$GITLAB_HOST/api/v4/user" | jq -r '.id'
 }
 
-project_ids=($(get_all_project_ids))
-user_email=$(get_user_email)
-#echo "${project_ids[@]}"
+#url_encode() {
+#    local string="$1"
+#    python3 -c "import urllib.parse; print(urllib.parse.quote('$string'))"
+#}
 
-for project_id in ${project_ids[@]}; do
-    echo "$project_id"
+projects=$(get_all_project_ids)
+user_email=$(get_user_email)
+
+echo "$projects" | jq -c '.[]' | while IFS= read -r project; do
+    project_id=$(echo "$project" | jq -r '.id')
+    project_name=$(echo "$project" | jq -r '.name_with_namespace')
+
     branches=($(get_all_user_branches_in_project $project_id $user_email))
-    echo "${branches[@]}"
     dangling_branches=($(get_all_dangling_branches_in_project $project_id ${branches[*]}))
-    echo ${dangling_branches[@]}
+
+    for dangling_branch in ${dangling_branches[@]}; do
+
+    done
 done
