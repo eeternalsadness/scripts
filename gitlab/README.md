@@ -1,8 +1,13 @@
+## Overview
+
+The scripts in here are used to interact with GitLab through the GitLab API.
+
 ## Prerequisites
 
 - fzf
 - curl
 - jq
+- xclip (Linux only)
 
 ## Usage
 
