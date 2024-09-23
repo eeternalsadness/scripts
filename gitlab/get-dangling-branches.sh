@@ -92,6 +92,14 @@ get_user_id() {
         "https://$GITLAB_HOST/api/v4/user" | jq -r '.id'
 }
 
+delete_branch() {
+    local project_id=$1
+    local branch_name=$2
+
+    curl -s --request DELETE --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --url "https://$GITLAB_HOST/api/v4/projects/${project_id}/repository/branches/${branch_name}"
+}
+
 #url_encode() {
 #    local string="$1"
 #    python3 -c "import urllib.parse; print(urllib.parse.quote('$string'))"
