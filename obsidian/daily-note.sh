@@ -3,8 +3,8 @@
 file_name="$(date +"%Y-%m-%d").md"
 
 # create file only if it doesn't exist
-if [[ ! -f "$OBSIDIAN_INBOX/Periodic Notes/Daily/$file_name" ]]; then
-    cat >"$OBSIDIAN_INBOX/Periodic Notes/Daily/$file_name" <<EOT
+if [[ ! -f "$OBSIDIAN_INBOX/Periodic Notes/0-Daily/$file_name" ]]; then
+    cat >"$OBSIDIAN_INBOX/Periodic Notes/0-Daily/$file_name" <<EOT
 # ${file_name}
 
 << [[$(date -d "yesterday" +"%Y-%m-%d")]] | [[$(date -d "tomorrow" +"%Y-%m-%d")]] >>
