@@ -9,11 +9,12 @@ else
 fi
 
 file_name="${file_name}.md"
+file_path="$OBSIDIAN_INBOX/$file_name"
 
 # create file only if it doesn't exist
-if [[ ! -f "$OBSIDIAN_INBOX/$file_name" ]]; then
-    cat >"$OBSIDIAN_INBOX/$file_name" <<EOT
-
+if [[ ! -f "$file_path" ]]; then
+    cat >"$file_path" <<EOT
+# ${file_name}
 
 ---
 
@@ -27,5 +28,5 @@ fi
 
 # no file name provided, open neovim
 if [[ -z $1 ]]; then
-    nvim -c "cd $OBSIDIAN" "$OBSIDIAN_INBOX/$file_name"
+    nvim -c "cd $OBSIDIAN" "$file_path"
 fi

@@ -1,10 +1,11 @@
 #!/bin/bash
 
 file_name="$(date +"%Y-%m-%d").md"
+file_path="$OBSIDIAN/Periodic Notes/0-Daily/$file_name"
 
 # create file only if it doesn't exist
-if [[ ! -f "$OBSIDIAN/Periodic Notes/0-Daily/$file_name" ]]; then
-    cat >"$OBSIDIAN/Periodic Notes/0-Daily/$file_name" <<EOT
+if [[ ! -f "$file_path" ]]; then
+    cat >"$file_path" <<EOT
 # ${file_name}
 
 << [[$(date -d "yesterday" +"%Y-%m-%d")]] | [[$(date -d "tomorrow" +"%Y-%m-%d")]] >>

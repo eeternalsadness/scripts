@@ -1,10 +1,11 @@
 #!/bin/bash
 
 file_name="$(date +"%Y-W%W").md"
+file_path="$OBSIDIAN/Periodic Notes/1-Weekly/$file_name"
 
 # create file only if it doesn't exist
-if [[ ! -f "$OBSIDIAN/Periodic Notes/1-Weekly/$file_name" ]]; then
-    cat >"$OBSIDIAN/Periodic Notes/1-Weekly/$file_name" <<EOT
+if [[ ! -f "$file_path" ]]; then
+    cat >"$file_path" <<EOT
 # ${file_name}
 
 << [[$(date -d "last week" +"%Y-W%W")]] | [[$(date -d "next week" +"%Y-W%W")]] >>
@@ -13,8 +14,6 @@ if [[ ! -f "$OBSIDIAN/Periodic Notes/1-Weekly/$file_name" ]]; then
 
 - [ ] Run 4/7 days, 30 minutes per run
 - [ ] Study 1 hour everyday
-
-## Logs
 
 ## Reflections
 
