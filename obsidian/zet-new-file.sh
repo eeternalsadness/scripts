@@ -23,6 +23,16 @@ Tags:
 
 Links:
 EOT
+
+    # NOTE: append to daily note
+    daily_file_name="$(date +"%Y-%m-%d")"
+    daily_file_path="$OBSIDIAN/Periodic Notes/0-Daily/${daily_file_name}.md"
+
+    if [[ ! -f "$daily_file_path" ]]; then
+        bash $SCRIPTS/obsidian/daily-note.sh
+    fi
+
+    echo "[[$file_name]]" >>"$daily_file_path"
 fi
 
 # no file name provided, open neovim
