@@ -1,7 +1,7 @@
 #!/bin/bash
 
-file_name="$(date +"%Y-W%W").md"
-file_path="$OBSIDIAN/Periodic Notes/1-Weekly/$file_name"
+file_name="$(date +"%Y-W%W")"
+file_path="$OBSIDIAN/Periodic Notes/1-Weekly/${file_name}.md"
 
 # create file only if it doesn't exist
 if [[ ! -f "$file_path" ]]; then

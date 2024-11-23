@@ -8,8 +8,7 @@ else
     read -rp "Enter the file name: " file_name
 fi
 
-file_name="${file_name}.md"
-file_path="$OBSIDIAN_INBOX/$file_name"
+file_path="$OBSIDIAN_INBOX/${file_name}.md"
 
 # create file only if it doesn't exist
 if [[ ! -f "$file_path" ]]; then
