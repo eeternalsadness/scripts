@@ -26,7 +26,7 @@ if [[ ! -f "$file_path" ]]; then
 
 ### What could you have done better?
 
-### What are some of the notable things that happened today?
+### What are some notable things that happened today?
 
 ---
 
