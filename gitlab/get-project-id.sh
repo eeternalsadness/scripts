@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
  
 echo "=============================================================================="
 echo "Script: $(basename $0)"
@@ -28,7 +28,7 @@ projects=$(list_projects)
  
 while true; do
 	# check if there's no more search results
-	if [[ -z $projects || $(echo "$projects" | jq 'length') -eq 0 ]]; then
+	if [[ -z "$projects" || $(echo "$projects" | jq 'length') -eq 0 ]]; then
 		echo "Reached the end of search results. Exiting..."
 		exit 0
 	fi
@@ -38,7 +38,7 @@ while true; do
 	# selected project
 	if [[ -n $project_id ]]; then
 		# copy to clipboard
-		echo -n "$project_id" | xclip -in -selection clipboard
+		echo -n "$project_id" | xclip -selection clipboard
 		echo "$project_id"
 		exit 0
 	fi

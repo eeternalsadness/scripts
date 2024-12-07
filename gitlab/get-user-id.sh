@@ -1,11 +1,13 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 page=1
 per_page=100
 
+read -rp "Enter the search term: " search_term
+
 list_users() {
-    curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        "https://$GITLAB_HOST/api/v4/users?page=$page&per_page=$per_page"
+    curl -s --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+        "https://${GITLAB_HOST}/api/v4/users?search=$search_term&without_project_bots=true&page=$page&per_page=$per_page"
 }
 
 select_user() {
@@ -16,9 +18,9 @@ select_user() {
 users=$(list_users)
 
 while true; do
-    # check if there's no more user to fetch
-    if [[ -z $users || $(echo "$users" | jq 'length') -eq 0 ]]; then
-        echo "Reached the end of list of users. Exiting..."
+    # check if there's no more search results
+    if [[ -z "$users" || $(echo "$users" | jq 'length') -eq 0 ]]; then
+        echo "Reached the end of search results. Exiting..."
         exit 0
     fi
 
@@ -26,18 +28,13 @@ while true; do
 
     # selected user
     if [[ -n $user_id ]]; then
-        echo "$user_id"
-
         # copy to clipboard
-        if [ "$(uname)" == "Darwin" ]; then
-            echo "$user_id" | pbcopy
-        else
-            echo "$user_id" | xclip -selection clipboard
-        fi
+		echo -n "$user_id" | xclip -selection clipboard
+        echo "$user_id"
         exit 0
     fi
 
-    read -rp "Press Enter to go to next page, or press 'q' to quit: " input
+    read -rp "Press Enter to continue searching, or press 'q' to quit: " input
     if [[ "$input" == "q" ]]; then
         echo "Exiting..."
         exit 0
