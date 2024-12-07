@@ -2,7 +2,7 @@
  
 echo "=============================================================================="
 echo "Script: $(basename $0)"
-echo "Fuzzy search Gitlab projects to get a project's ID, then copy the ID to clipboard"
+echo "Fuzzy search Gitlab projects that you're a member of to get the project's ID, then copy the ID to clipboard"
 echo "Assumptions"
 echo "- exported GITLAB_TOKEN"
 echo "- exported GITLAB_HOST"
