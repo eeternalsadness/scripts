@@ -23,6 +23,7 @@ Tags:
 
 Links:
 EOT
+    create_note_success=$?
 
     # NOTE: append to daily note
     daily_file_name="$(date +"%Y-%m-%d")"
@@ -32,7 +33,7 @@ EOT
         bash $SCRIPTS/obsidian/daily-note.sh
     fi
 
-    echo "[[$file_name]]" >>"$daily_file_path"
+    [[ "$create_note_success" == 0 ]] && echo "[[$file_name]]" >>"$daily_file_path"
 fi
 
 # no file name provided, open neovim
