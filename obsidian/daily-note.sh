@@ -5,7 +5,7 @@ file_path="$OBSIDIAN/Periodic Notes/0-Daily/${file_name}.md"
 
 # create file only if it doesn't exist
 if [[ ! -f "$file_path" ]]; then
-    cat >"$file_path" <<EOT
+  cat >"$file_path" <<EOT
 # ${file_name}
 
 << [[$(date -d "yesterday" +"%Y-%m-%d")]] | [[$(date -d "tomorrow" +"%Y-%m-%d")]] >>
@@ -35,7 +35,8 @@ $(date +'%Y%m%d%H%M')
 Tags:
 
 Links:
+
 EOT
 else
-    echo "Daily note '$file_name' already exists"
+  echo "Daily note '$file_name' already exists"
 fi
