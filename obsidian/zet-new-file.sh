@@ -23,6 +23,7 @@ $(date +'%Y%m%d%H%M')
 Tags:
 
 Links:
+
 EOT
   create_note_success=$?
 

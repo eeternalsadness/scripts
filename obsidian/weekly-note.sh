@@ -5,7 +5,7 @@ file_path="$OBSIDIAN/Periodic Notes/1-Weekly/${file_name}.md"
 
 # create file only if it doesn't exist
 if [[ ! -f "$file_path" ]]; then
-    cat >"$file_path" <<EOT
+  cat >"$file_path" <<EOT
 # ${file_name}
 
 << [[$(date -d "last week" +"%Y-W%W")]] | [[$(date -d "next week" +"%Y-W%W")]] >>
@@ -30,7 +30,8 @@ $(date +'%Y%m%d%H%M')
 Tags:
 
 Links:
+
 EOT
 else
-    echo "Weekly note '$file_name' already exists"
+  echo "Weekly note '$file_name' already exists"
 fi
