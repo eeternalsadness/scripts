@@ -43,6 +43,7 @@ select-git-repo() {
 
 format-session-name() {
   # NOTE: format session name so that it doesn't contain any bad special characters
+  # FIXME: ideally I should only do this on the actual repo name, not the parent directories as well
   session_name=$1
-  echo "$session_name" | sed 's/[^a-zA-Z0-9-]/-/g' | sed 's/--*/-/g'
+  echo "$session_name" | sed 's/[^a-zA-Z0-9\-\/]/-/g' | sed 's/--*/-/g'
 }
