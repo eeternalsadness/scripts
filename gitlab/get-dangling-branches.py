@@ -10,11 +10,28 @@ GITLAB_HOST = os.getenv("GITLAB_HOST")
 HEADERS = {"PRIVATE-TOKEN": GITLAB_TOKEN}
 
 
+def call_gitlab_api(method, headers, path):
+    url = f"https://{GITLAB_HOST}/api/v4/{path}"
+    match method.lower():
+        case "get":
+            response = requests.get(url, headers=headers)
+        case "post":
+            response = requests.post(url, headers=headers)
+        case "delete":
+            response = requests.delete(url, headers=headers)
+        case _:
+            raise Exception(f"Invalid method '{method}'!")
+
+    return {
+        "status_code": response.status_code,
+        "body": response.json(),
+    }
+
+
 # List projects with pagination
 def list_projects(page, items_per_page):
-    url = f"https://{GITLAB_HOST}/api/v4/projects?membership=true&simple=true&page={page}&per_page={items_per_page}"
-    response = requests.get(url, headers=HEADERS)
-    return response.json()
+    path = f"projects?membership=true&simple=true&page={page}&per_page={items_per_page}"
+    return call_gitlab_api("GET", HEADERS, path)
 
 
 # Get all project IDs
@@ -25,12 +42,13 @@ def get_all_project_ids():
 
     while True:
         result = list_projects(page, items_per_page)
-        if not result:
+        if not result["body"]:
             break
+
         project_ids.extend(
             [
                 {"id": proj["id"], "name_with_namespace": proj["name_with_namespace"]}
-                for proj in result
+                for proj in result["body"]
             ]
         )
         page += 1
@@ -40,9 +58,9 @@ def get_all_project_ids():
 
 # Get recent project IDs by pushed events
 def get_recent_project_ids():
-    url = f"https://{GITLAB_HOST}/api/v4/events?action=pushed&per_page=100"
-    response = requests.get(url, headers=HEADERS)
-    project_ids = [event["project_id"] for event in response.json()]
+    path = f"https://{GITLAB_HOST}/api/v4/events?action=pushed&per_page=100"
+    response = call_gitlab_api("GET", HEADERS, path)
+    project_ids = [event["project_id"] for event in response["body"]]
     return sorted(set(project_ids))
 
 
@@ -90,10 +108,10 @@ def get_user_email():
 
 
 # Delete a branch
-def delete_branch(project_id, branch_name):
-    url = f"https://{GITLAB_HOST}/api/v4/projects/{project_id}/repository/branches/{urllib.parse.quote(branch_name)}"
-    response = requests.delete(url, headers=HEADERS)
-    return response.status_code
+# def delete_branch(project_id, branch_name):
+#    url = f"https://{GITLAB_HOST}/api/v4/projects/{project_id}/repository/branches/{urllib.parse.quote(branch_name)}"
+#    response = requests.delete(url, headers=HEADERS)
+#    return response.status_code
 
 
 # Main logic to find dangling branches without open MRs
