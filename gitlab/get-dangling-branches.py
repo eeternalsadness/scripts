@@ -1,6 +1,4 @@
 import requests
-import json
-import urllib.parse
 import os
 
 # Set your GitLab token and host
@@ -58,7 +56,7 @@ def get_all_project_ids():
 
 # Get recent project IDs by pushed events
 def get_recent_project_ids():
-    path = f"https://{GITLAB_HOST}/api/v4/events?action=pushed&per_page=100"
+    path = "events?action=pushed&per_page=100"
     response = call_gitlab_api("GET", HEADERS, path)
     project_ids = [event["project_id"] for event in response["body"]]
     return sorted(set(project_ids))
@@ -66,9 +64,9 @@ def get_recent_project_ids():
 
 # List recent branches in a project
 def list_recent_branches(project_id, items_per_page):
-    url = f"https://{GITLAB_HOST}/api/v4/projects/{project_id}/repository/branches?sort=updated_desc&page=1&per_page={items_per_page}"
-    response = requests.get(url, headers=HEADERS)
-    return response.json()
+    path = f"projects/{project_id}/repository/branches?sort=updated_desc&page=1&per_page={items_per_page}"
+    response = call_gitlab_api("GET", HEADERS, path)
+    return response["body"]
 
 
 # Get all user branches in a project
@@ -86,25 +84,28 @@ def get_all_user_branches_in_project(project_id, email):
 def get_all_dangling_branches_in_project(project_id, branches):
     dangling_branches = []
     for branch in branches:
-        url = f"https://{GITLAB_HOST}/api/v4/projects/{project_id}/merge_requests?scope=created_by_me&state=opened&source_branch={branch}"
-        response = requests.get(url, headers=HEADERS)
-        if not response.json():
+        path = f"projects/{project_id}/merge_requests?scope=created_by_me&state=opened&source_branch={branch}"
+        response = call_gitlab_api("GET", HEADERS, path)
+        if not response["body"]:
             dangling_branches.append(branch)
     return dangling_branches
 
 
-# Get open merge requests targeting master
+# Get open merge requests targeting master/main
 def get_open_mrs():
-    url = f"https://{GITLAB_HOST}/api/v4/merge_requests?state=opened"
-    response = requests.get(url, headers=HEADERS)
-    return [mr for mr in response.json() if mr["target_branch"] == "master"]
+    path = "merge_requests?state=opened"
+    response = call_gitlab_api("GET", HEADERS, path)
+    return [
+        mr
+        for mr in response["body"]
+        if mr["target_branch"] == "master" or mr["target_branch"] == "main"
+    ]
 
 
 # Get the user's email
 def get_user_email():
-    url = f"https://{GITLAB_HOST}/api/v4/user"
-    response = requests.get(url, headers=HEADERS)
-    return response.json()["email"]
+    response = call_gitlab_api("GET", HEADERS, "user")
+    return response["body"]["email"]
 
 
 # Delete a branch
@@ -126,7 +127,7 @@ def main():
         project_id = project["id"]
         project_name = project["name_with_namespace"]
 
-        print(f"Getting all branches created by '{user_email}' in '{project_name}'")
+        # print(f"Getting all branches created by '{user_email}' in '{project_name}'")
         branches = get_all_user_branches_in_project(project_id, user_email)
 
         print(
