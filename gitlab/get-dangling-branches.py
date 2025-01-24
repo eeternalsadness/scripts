@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import requests
 import os
 
@@ -71,7 +73,7 @@ def list_recent_branches(project_id, items_per_page):
 
 # Get all user branches in a project
 def get_all_user_branches_in_project(project_id, email):
-    branches_on_page = list_recent_branches(project_id, 10)
+    branches_on_page = list_recent_branches(project_id, 20)
     branches = [
         branch["name"]
         for branch in branches_on_page
