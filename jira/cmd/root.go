@@ -34,16 +34,8 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "jira",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "A CLI tool to do common Jira tasks",
+	Long: `This CLI tool aims to carry out common Jira tasks, helping you to stay in the command line instead of breaking your workflow and going to your web browser for Jira tasks.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -62,7 +54,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.jira.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/jira/config.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -80,8 +72,7 @@ func initConfig() {
 		cobra.CheckErr(err)
 
 		// Search config in home directory with name ".jira" (without extension).
-		viper.AddConfigPath(".config/jira/")
-		viper.AddConfigPath(".jira/")
+		viper.AddConfigPath(fmt.Sprintf("%s/.config/jira/", home))
 		viper.AddConfigPath(home)
 		viper.AddConfigPath(".")
 		viper.SetConfigName("config")
@@ -95,10 +86,8 @@ func initConfig() {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	} else {
     // panic if config file doesn't exist
-    if _, errStat := os.Stat(cfgFile); os.IsNotExist(errStat) {
+    if _, errStat := os.Stat(cfgFile); cfgFile != "" && os.IsNotExist(errStat) {
       panic(fmt.Errorf("Config file not found: %s", viper.ConfigFileUsed()))
-    }
-    if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
     }
   }
 }

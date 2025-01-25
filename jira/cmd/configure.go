@@ -23,23 +23,59 @@ package cmd
 
 import (
 	"fmt"
+  "bufio"
+  "os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // configureCmd represents the configure command
 var configureCmd = &cobra.Command{
 	Use:   "configure",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Configure Jira domain & credentials",
+	Long: `Configure Jira domain, email address, and API token`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("configure called")
+    configure()
 	},
+}
+
+func configure() {
+  reader := bufio.NewReader(os.Stdin)
+
+  // check for overwrite
+	if err := viper.ReadInConfig(); err == nil {
+    fmt.Printf("Config file exists at '%s'", viper.ConfigFileUsed())
+    fmt.Print("Overwrite config file? [y/n]: ")
+    overwrite := reader.ReadString('\n')
+    overwrite = overwrite[:len(overwrite) - 1]
+
+    if overwrite != "y" {
+      if overwrite != "n" {
+        fmt.Println("Input must be 'y' or 'n'.")
+      }
+      return
+    }
+  }
+
+  // configure jira domain
+  fmt.Print("Enter the Jira domain [example.atlassian.net]: ")
+  domain, _ := reader.ReadString('\n')
+  domain = domain[:len(domain) - 1]
+  viper.Set("domain", domain)
+
+  // configure jira email
+  fmt.Print("Enter the email address used for Jira [example@example.com]: ")
+  email, _ := reader.ReadString('\n')
+  email = email[:len(email) - 1]
+  viper.Set("email", email)
+
+  fmt.Print("Enter the Jira API token: ")
+  token, _ := reader.ReadString('\n')
+  token = token[:len(token) - 1]
+  viper.Set("token", token)
+
+  viper.WriteConfig()
 }
 
 func init() {
