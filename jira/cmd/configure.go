@@ -47,7 +47,7 @@ func configure() {
 	if err := viper.ReadInConfig(); err == nil {
     fmt.Printf("Config file exists at '%s'", viper.ConfigFileUsed())
     fmt.Print("Overwrite config file? [y/n]: ")
-    overwrite := reader.ReadString('\n')
+    overwrite, _ := reader.ReadString('\n')
     overwrite = overwrite[:len(overwrite) - 1]
 
     if overwrite != "y" {
