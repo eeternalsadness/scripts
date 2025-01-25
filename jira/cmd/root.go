@@ -30,6 +30,7 @@ import (
 )
 
 var cfgFile string
+var cfgPath string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -61,7 +62,6 @@ func init() {
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.
@@ -71,23 +71,17 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".jira" (without extension).
-		viper.AddConfigPath(fmt.Sprintf("%s/.config/jira/", home))
-		viper.AddConfigPath(home)
-		viper.AddConfigPath(".")
+    cfgPath = fmt.Sprintf("%s/.config/jira/", home)
+		viper.AddConfigPath(cfgPath)
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
-	} else {
-    // panic if config file doesn't exist
-    if _, errStat := os.Stat(cfgFile); cfgFile != "" && os.IsNotExist(errStat) {
-      panic(fmt.Errorf("Config file not found: %s", viper.ConfigFileUsed()))
+    if cfgFile != "" {
+      fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
     }
+  } else if _, errStat := os.Stat(cfgFile); cfgFile != "" && os.IsNotExist(errStat) {
+    fmt.Fprintln(os.Stderr, "Config file not found: ", viper.ConfigFileUsed())
   }
 }

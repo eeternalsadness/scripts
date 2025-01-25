@@ -45,7 +45,7 @@ func configure() {
 
   // check for overwrite
 	if err := viper.ReadInConfig(); err == nil {
-    fmt.Printf("Config file exists at '%s'", viper.ConfigFileUsed())
+    fmt.Printf("Config file exists at '%s'\n", viper.ConfigFileUsed())
     fmt.Print("Overwrite config file? [y/n]: ")
     overwrite, _ := reader.ReadString('\n')
     overwrite = overwrite[:len(overwrite) - 1]
@@ -57,6 +57,9 @@ func configure() {
       return
     }
   }
+
+  // create config folder
+  os.MkdirAll(cfgPath, 0755)
 
   // configure jira domain
   fmt.Print("Enter the Jira domain [example.atlassian.net]: ")
@@ -75,7 +78,7 @@ func configure() {
   token = token[:len(token) - 1]
   viper.Set("token", token)
 
-  viper.WriteConfig()
+  viper.WriteConfigAs(fmt.Sprintf("%s/config.yaml", cfgPath))
 }
 
 func init() {
