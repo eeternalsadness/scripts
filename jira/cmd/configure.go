@@ -30,6 +30,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// TODO: maybe refactor this into another file
+type Config struct {
+  domain string
+  email string
+  apiToken string
+}
+
 // configureCmd represents the configure command
 var configureCmd = &cobra.Command{
 	Use:   "configure",
@@ -73,6 +80,7 @@ func configure() {
   email = email[:len(email) - 1]
   viper.Set("email", email)
 
+  // configure jira api token
   fmt.Print("Enter the Jira API token: ")
   token, _ := reader.ReadString('\n')
   token = token[:len(token) - 1]
@@ -83,14 +91,4 @@ func configure() {
 
 func init() {
 	rootCmd.AddCommand(configureCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// configureCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configureCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

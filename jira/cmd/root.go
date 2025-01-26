@@ -77,6 +77,7 @@ func initConfig() {
 		viper.SetConfigType("yaml")
 	}
 
+  // TODO: is it possible to check which command was called?
 	if err := viper.ReadInConfig(); err == nil {
     if cfgFile != "" {
       fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
