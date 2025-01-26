@@ -30,13 +30,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// TODO: maybe refactor this into another file
-type Config struct {
-  domain string
-  email string
-  apiToken string
-}
-
 // configureCmd represents the configure command
 var configureCmd = &cobra.Command{
 	Use:   "configure",
