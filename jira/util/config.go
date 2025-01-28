@@ -5,13 +5,13 @@ import (
   "fmt"
 )
 
-type Config struct {
+type Jira struct {
   domain string
   email string
   apiToken string
 }
 
-func (config *Config) GetAuthToken() string {
-  auth := fmt.Sprintf("%s:%s", config.email, config.apiToken)
+func (jira *Jira) GetAuthToken() string {
+  auth := fmt.Sprintf("%s:%s", jira.email, jira.apiToken)
   return base64.StdEncoding.EncodeToString([]byte(auth))
 }
