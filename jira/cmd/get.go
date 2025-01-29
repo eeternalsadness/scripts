@@ -23,8 +23,11 @@ package cmd
 
 import (
 	"fmt"
+  "encoding/json"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/eeternalsadness/jira/util"
 )
 
 // getCmd represents the get command
@@ -38,7 +41,14 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("get called")
+    var jira util.Jira
+    viper.Unmarshal(&jira)
+    resp := jira.CallApi("rest/api/3/project/search", "GET")
+
+    // parse json data
+    var data map[string]interface{}
+    json.Unmarshal(resp, &data)
+    fmt.Println(data)
 	},
 }
 

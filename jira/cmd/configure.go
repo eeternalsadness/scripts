@@ -65,19 +65,19 @@ func configure() {
   fmt.Print("Enter the Jira domain [example.atlassian.net]: ")
   domain, _ := reader.ReadString('\n')
   domain = domain[:len(domain) - 1]
-  viper.Set("domain", domain)
+  viper.Set("Domain", domain)
 
   // configure jira email
   fmt.Print("Enter the email address used for Jira [example@example.com]: ")
   email, _ := reader.ReadString('\n')
   email = email[:len(email) - 1]
-  viper.Set("email", email)
+  viper.Set("Email", email)
 
   // configure jira api token
   fmt.Print("Enter the Jira API token: ")
   token, _ := reader.ReadString('\n')
   token = token[:len(token) - 1]
-  viper.Set("token", token)
+  viper.Set("Token", token)
 
   viper.WriteConfigAs(fmt.Sprintf("%s/config.yaml", cfgPath))
 }

@@ -6,12 +6,12 @@ import (
 )
 
 type Jira struct {
-  domain string
-  email string
-  apiToken string
+  Domain string
+  Email string
+  Token string
 }
 
 func (jira *Jira) GetAuthToken() string {
-  auth := fmt.Sprintf("%s:%s", jira.email, jira.apiToken)
+  auth := fmt.Sprintf("%s:%s", jira.Email, jira.Token)
   return base64.StdEncoding.EncodeToString([]byte(auth))
 }
