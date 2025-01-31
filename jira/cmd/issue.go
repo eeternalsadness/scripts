@@ -55,9 +55,9 @@ var createIssueCmd = &cobra.Command{
 
 func getAssignedIssues() {
   // call api
-  jql := "assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)"
-  fields := "summary,status"
-  path := fmt.Sprintf("rest/api/3/search/jql?jql=%s&fields=%s&fieldsByKeys=true", url.QueryEscape(jql), url.QueryEscape(fields))
+  jql := url.QueryEscape("assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)")
+  fields := url.QueryEscape("summary,status")
+  path := fmt.Sprintf("rest/api/3/search/jql?jql=%s&fields=%s&fieldsByKeys=true", jql, fields)
   resp := jira.CallApi(path, "GET")
 
   // parse json data
