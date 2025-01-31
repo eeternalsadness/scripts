@@ -33,33 +33,35 @@ import (
 	"github.com/eeternalsadness/jira/util"
 )
 
-// issuesCmd represents the issues command
-var issuesCmd = &cobra.Command{
-	Use:   "issues",
+// getIssueCmd represents the issues command when called by the get command
+var getIssueCmd = &cobra.Command{
+	Use:   "issue",
 	Short: "Get your current Jira issues",
   Long: `Get Jira issues that are assigned to the current user (you).
 Issues with status 'Done', 'Rejected', or 'Cancelled' are not returned.`,
 	Run: func(cmd *cobra.Command, args []string) {
-    switch parentCmd := cmd.Parent().Use; parentCmd {
-      case "get":
-        getAssignedIssues()
-      case "create":
-        fmt.Println("creating issue")
-      default:
-        panic(fmt.Sprintf("Unrecognized parent command: '%s'", parentCmd))
-    }
+    getAssignedIssues()
+	},
+}
+
+// createIssueCmd represents the issues command when called by the create command
+var createIssueCmd = &cobra.Command{
+	Use:   "issue",
+	Short: "Create a Jira issue",
+  //Long: ``,
+	Run: func(cmd *cobra.Command, args []string) {
+    createIssue()
 	},
 }
 
 func getAssignedIssues() {
-  jql := "assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)"
-  fields := "summary,status"
-
   // get jira config
   var jira util.Jira
   viper.Unmarshal(&jira)
 
   // call api
+  jql := "assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)"
+  fields := "summary,status"
   path := fmt.Sprintf("rest/api/3/search/jql?jql=%s&fields=%s&fieldsByKeys=true", url.QueryEscape(jql), url.QueryEscape(fields))
   resp := jira.CallApi(path, "GET")
 
@@ -69,14 +71,18 @@ func getAssignedIssues() {
 
   // print out issues
   w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-  fmt.Fprintln(w, "Issue\tStatus\t")
+  fmt.Fprintln(w, "ID\tIssue\tStatus\t")
   for _, issue := range issues.Issues {
-    fmt.Fprintf(w, "[%s] %s\t%s\t\n", issue.Key, issue.Fields.Summary, issue.Fields.Status.StatusCategory.Name)
+    fmt.Fprintf(w, "%s\t[%s] %s\t%s\t\n", issue.Id, issue.Key, issue.Fields.Summary, issue.Fields.Status.StatusCategory.Name)
   }
   w.Flush()
 }
 
+func createIssue() {
+  fmt.Println("creating issue")
+}
+
 func init() {
-	getCmd.AddCommand(issuesCmd)
-	createCmd.AddCommand(issuesCmd)
+	getCmd.AddCommand(getIssueCmd)
+	createCmd.AddCommand(createIssueCmd)
 }
