@@ -36,7 +36,9 @@ import (
 // issuesCmd represents the issues command
 var issuesCmd = &cobra.Command{
 	Use:   "issues",
-	Short: "get Jira issues that are assigned to the current user (you)",
+	Short: "Get your current Jira issues",
+  Long: `Get Jira issues that are assigned to the current user (you).
+Issues with status 'Done', 'Rejected', or 'Cancelled' are not returned.`,
 	Run: func(cmd *cobra.Command, args []string) {
     jql := "assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)"
     fields := "summary,status"
@@ -53,10 +55,6 @@ var issuesCmd = &cobra.Command{
     var issues util.Issues
     json.Unmarshal(resp, &issues)
 
-    //var data map[string]interface{}
-    //json.Unmarshal(resp, &data)
-    //jsonOutput, _ := json.Marshal(data)
-    //fmt.Println(string(jsonOutput))
     // print out issues
     w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
     fmt.Fprintln(w, "Issue\tStatus\t")

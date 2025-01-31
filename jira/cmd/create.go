@@ -30,7 +30,7 @@ import (
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "create a Jira resource",
+	Short: "Create a Jira resource",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("create called")
 	},
