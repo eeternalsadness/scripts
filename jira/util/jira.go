@@ -1,10 +1,22 @@
 package util
 
 import (
-  "net/http"
   "fmt"
   "io"
+  "encoding/base64"
+  "net/http"
 )
+
+type Jira struct {
+  Domain string
+  Email string
+  Token string
+}
+
+func (jira *Jira) getAuthToken() string {
+  auth := fmt.Sprintf("%s:%s", jira.Email, jira.Token)
+  return base64.StdEncoding.EncodeToString([]byte(auth))
+}
 
 func (jira *Jira) CallApi(path string, method string) []byte {
   // TODO: add actual error handling
@@ -15,7 +27,7 @@ func (jira *Jira) CallApi(path string, method string) []byte {
     return nil
   }
 
-  req.Header.Add("Authorization", fmt.Sprintf("Basic %s", jira.GetAuthToken()))
+  req.Header.Add("Authorization", fmt.Sprintf("Basic %s", jira.getAuthToken()))
   req.Header.Add("Accept", "application/json")
 
   resp, err := client.Do(req)
