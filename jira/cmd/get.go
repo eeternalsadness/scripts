@@ -28,7 +28,7 @@ import (
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Get a Jira resource",
+	Short: "get a Jira resource",
 	//Long: `Get a Jira resource`,
 }
 

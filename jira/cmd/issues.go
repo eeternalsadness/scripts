@@ -23,8 +23,10 @@ package cmd
 
 import (
 	"fmt"
+  "os"
   "encoding/json"
   "net/url"
+  "text/tabwriter"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -34,22 +36,34 @@ import (
 // issuesCmd represents the issues command
 var issuesCmd = &cobra.Command{
 	Use:   "issues",
-	Short: "Get Jira issues that are assigned to the current user (you)",
+	Short: "get Jira issues that are assigned to the current user (you)",
 	Run: func(cmd *cobra.Command, args []string) {
-    jql := "assignee = currentuser()"
+    jql := "assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)"
+    fields := "summary,status"
 
     // get jira config
     var jira util.Jira
     viper.Unmarshal(&jira)
 
     // call api
-    path := fmt.Sprintf("rest/api/3/search/jql?jql=%s", url.QueryEscape(jql))
+    path := fmt.Sprintf("rest/api/3/search/jql?jql=%s&fields=%s&fieldsByKeys=true", url.QueryEscape(jql), url.QueryEscape(fields))
     resp := jira.CallApi(path, "GET")
 
     // parse json data
-    var data map[string]interface{}
-    json.Unmarshal(resp, &data)
-    fmt.Println(data)
+    var issues util.Issues
+    json.Unmarshal(resp, &issues)
+
+    //var data map[string]interface{}
+    //json.Unmarshal(resp, &data)
+    //jsonOutput, _ := json.Marshal(data)
+    //fmt.Println(string(jsonOutput))
+    // print out issues
+    w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+    fmt.Fprintln(w, "Issue\tStatus\t")
+    for _, issue := range issues.Issues {
+      fmt.Fprintf(w, "[%s] %s\t%s\t\n", issue.Key, issue.Fields.Summary, issue.Fields.Status.StatusCategory.Name)
+    }
+    w.Flush()
 	},
 }
 

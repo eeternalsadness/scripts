@@ -5,6 +5,7 @@ import (
   "fmt"
 )
 
+// TODO: find a way to rename/refactor structs
 type Jira struct {
   Domain string
   Email string

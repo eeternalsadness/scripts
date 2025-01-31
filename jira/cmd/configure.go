@@ -33,8 +33,8 @@ import (
 // configureCmd represents the configure command
 var configureCmd = &cobra.Command{
 	Use:   "configure",
-	Short: "Configure Jira domain & credentials",
-	Long: `Configure Jira domain, email address, and API token`,
+	Short: "configure Jira domain & credentials",
+	Long: `configure Jira domain, email address, and API token`,
 	Run: func(cmd *cobra.Command, args []string) {
     configure()
 	},
