@@ -40,31 +40,43 @@ var issuesCmd = &cobra.Command{
   Long: `Get Jira issues that are assigned to the current user (you).
 Issues with status 'Done', 'Rejected', or 'Cancelled' are not returned.`,
 	Run: func(cmd *cobra.Command, args []string) {
-    jql := "assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)"
-    fields := "summary,status"
-
-    // get jira config
-    var jira util.Jira
-    viper.Unmarshal(&jira)
-
-    // call api
-    path := fmt.Sprintf("rest/api/3/search/jql?jql=%s&fields=%s&fieldsByKeys=true", url.QueryEscape(jql), url.QueryEscape(fields))
-    resp := jira.CallApi(path, "GET")
-
-    // parse json data
-    var issues util.Issues
-    json.Unmarshal(resp, &issues)
-
-    // print out issues
-    w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-    fmt.Fprintln(w, "Issue\tStatus\t")
-    for _, issue := range issues.Issues {
-      fmt.Fprintf(w, "[%s] %s\t%s\t\n", issue.Key, issue.Fields.Summary, issue.Fields.Status.StatusCategory.Name)
+    switch parentCmd := cmd.Parent().Use; parentCmd {
+      case "get":
+        getAssignedIssues()
+      case "create":
+        fmt.Println("creating issue")
+      default:
+        panic(fmt.Sprintf("Unrecognized parent command: '%s'", parentCmd))
     }
-    w.Flush()
 	},
+}
+
+func getAssignedIssues() {
+  jql := "assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)"
+  fields := "summary,status"
+
+  // get jira config
+  var jira util.Jira
+  viper.Unmarshal(&jira)
+
+  // call api
+  path := fmt.Sprintf("rest/api/3/search/jql?jql=%s&fields=%s&fieldsByKeys=true", url.QueryEscape(jql), url.QueryEscape(fields))
+  resp := jira.CallApi(path, "GET")
+
+  // parse json data
+  var issues util.Issues
+  json.Unmarshal(resp, &issues)
+
+  // print out issues
+  w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+  fmt.Fprintln(w, "Issue\tStatus\t")
+  for _, issue := range issues.Issues {
+    fmt.Fprintf(w, "[%s] %s\t%s\t\n", issue.Key, issue.Fields.Summary, issue.Fields.Status.StatusCategory.Name)
+  }
+  w.Flush()
 }
 
 func init() {
 	getCmd.AddCommand(issuesCmd)
+	createCmd.AddCommand(issuesCmd)
 }
