@@ -29,7 +29,6 @@ import (
   "text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/eeternalsadness/jira/util"
 )
 
@@ -55,10 +54,6 @@ var createIssueCmd = &cobra.Command{
 }
 
 func getAssignedIssues() {
-  // get jira config
-  var jira util.Jira
-  viper.Unmarshal(&jira)
-
   // call api
   jql := "assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)"
   fields := "summary,status"

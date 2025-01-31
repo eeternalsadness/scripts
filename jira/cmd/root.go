@@ -27,10 +27,12 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/eeternalsadness/jira/util"
 )
 
 var cfgFile string
 var cfgPath string
+var jira util.Jira
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -82,6 +84,9 @@ func initConfig() {
     if cfgFile != "" {
       fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
     }
+    // get jira config
+    viper.Unmarshal(&jira)
+
   } else if _, errStat := os.Stat(cfgFile); cfgFile != "" && os.IsNotExist(errStat) {
     fmt.Fprintln(os.Stderr, "Config file not found: ", viper.ConfigFileUsed())
   }
