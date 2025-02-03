@@ -2,6 +2,7 @@ package util
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -52,4 +53,25 @@ func (jira *Jira) callApi(path string, method string, body io.Reader) ([]byte, e
 	}
 
 	return respBody, nil
+}
+
+func (jira *Jira) getCurrentUserId() (string, error) {
+	// call api
+	path := "rest/api/3/myself"
+	resp, err := jira.callApi(path, "GET", nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to call Jira API: %w", err)
+	}
+
+	// parse json
+	var data map[string]interface{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return "", fmt.Errorf("failed to unmarshal JSON response from Jira API: %w", err)
+	}
+
+	// transform json to output
+	accountId := data["accountId"].(string)
+
+	return accountId, nil
 }
