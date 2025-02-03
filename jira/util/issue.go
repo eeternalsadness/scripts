@@ -59,7 +59,7 @@ func (jira *Jira) GetAssignedIssues() ([]Issue, error) {
 	return outIssues, nil
 }
 
-func (jira *Jira) CreateIssue(projectId string, title string, description string) (string, error) {
+func (jira *Jira) CreateIssue(projectId string, issueTypeId string, title string, description string) (string, error) {
 	// get current user id
 	currentUserId, err := jira.getCurrentUserId()
 	if err != nil {
@@ -87,7 +87,6 @@ func (jira *Jira) CreateIssue(projectId string, title string, description string
 	}
 
 	// form request body
-	// TODO: allow for different issue types to be created
 	body := fmt.Sprintf(`{
     "fields": {
       "assignee": {
@@ -97,13 +96,13 @@ func (jira *Jira) CreateIssue(projectId string, title string, description string
         "id": "%s"
       },
       "issuetype": {
-        "id": "10101"
+        "id": "%s"
       },
       %s
       "summary": "%s"
     },
     "update": {}
-  }`, currentUserId, projectId, descriptionField, title)
+  }`, currentUserId, projectId, issueTypeId, descriptionField, title)
 
 	// call api
 	path := "rest/api/3/issue"

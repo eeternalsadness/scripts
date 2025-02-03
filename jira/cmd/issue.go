@@ -90,7 +90,7 @@ var createIssueCmd = &cobra.Command{
 		// create issue
 		// TODO: find a way to create issues for different projects
 		// TODO: find a way to create different issue types
-		issueKey, err := jira.CreateIssue("10140", title, description)
+		issueKey, err := jira.CreateIssue(jira.DefaultProjectId, jira.DefaultIssueTypeId, title, description)
 		if err != nil {
 			fmt.Printf("Failed to create Jira issue: %s\n", err)
 			return

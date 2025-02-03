@@ -22,9 +22,9 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"bufio"
 	"fmt"
-  "bufio"
-  "os"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -33,53 +33,64 @@ import (
 // configureCmd represents the configure command
 var configureCmd = &cobra.Command{
 	Use:   "configure",
-	Short: "Configure Jira domain & credentials",
-	Long: `Configure Jira domain, email address, and API token.`,
+	Short: "Configure Jira domain, credentials, and some default values",
 	Run: func(cmd *cobra.Command, args []string) {
-    configure()
+		configure()
 	},
 }
 
 func configure() {
-  reader := bufio.NewReader(os.Stdin)
+	reader := bufio.NewReader(os.Stdin)
 
-  // check for overwrite
+	// check for overwrite
 	if err := viper.ReadInConfig(); err == nil {
-    fmt.Printf("Config file exists at '%s'\n", viper.ConfigFileUsed())
-    fmt.Print("Overwrite config file? [y/n]: ")
-    overwrite, _ := reader.ReadString('\n')
-    overwrite = overwrite[:len(overwrite) - 1]
+		fmt.Printf("Config file exists at '%s'\n", viper.ConfigFileUsed())
+		fmt.Print("Overwrite config file? [y/n]: ")
+		overwrite, _ := reader.ReadString('\n')
+		overwrite = overwrite[:len(overwrite)-1]
 
-    if overwrite != "y" {
-      if overwrite != "n" {
-        fmt.Println("Input must be 'y' or 'n'.")
-      }
-      return
-    }
-  }
+		if overwrite != "y" {
+			if overwrite != "n" {
+				fmt.Println("Input must be 'y' or 'n'.")
+			}
+			return
+		}
+	}
 
-  // create config folder
-  os.MkdirAll(cfgPath, 0755)
+	// create config folder
+	os.MkdirAll(cfgPath, 0755)
 
-  // configure jira domain
-  fmt.Print("Enter the Jira domain [example.atlassian.net]: ")
-  domain, _ := reader.ReadString('\n')
-  domain = domain[:len(domain) - 1]
-  viper.Set("Domain", domain)
+	// configure jira domain
+	fmt.Print("Enter the Jira domain [example.atlassian.net]: ")
+	domain, _ := reader.ReadString('\n')
+	domain = domain[:len(domain)-1]
+	viper.Set("Domain", domain)
 
-  // configure jira email
-  fmt.Print("Enter the email address used for Jira [example@example.com]: ")
-  email, _ := reader.ReadString('\n')
-  email = email[:len(email) - 1]
-  viper.Set("Email", email)
+	// configure jira email
+	fmt.Print("Enter the email address used for Jira [example@example.com]: ")
+	email, _ := reader.ReadString('\n')
+	email = email[:len(email)-1]
+	viper.Set("Email", email)
 
-  // configure jira api token
-  fmt.Print("Enter the Jira API token: ")
-  token, _ := reader.ReadString('\n')
-  token = token[:len(token) - 1]
-  viper.Set("Token", token)
+	// configure jira api token
+	fmt.Print("Enter the Jira API token: ")
+	token, _ := reader.ReadString('\n')
+	token = token[:len(token)-1]
+	viper.Set("Token", token)
 
-  viper.WriteConfigAs(fmt.Sprintf("%s/config.yaml", cfgPath))
+	// configure default project id
+	fmt.Print("Enter the default project ID [12345]: ")
+	defaultProjectId, _ := reader.ReadString('\n')
+	defaultProjectId = defaultProjectId[:len(defaultProjectId)-1]
+	viper.Set("DefaultProjectId", defaultProjectId)
+
+	// configure jira email
+	fmt.Print("Enter the default issue type ID for the project [12345]: ")
+	defaultIssueTypeId, _ := reader.ReadString('\n')
+	defaultIssueTypeId = defaultIssueTypeId[:len(defaultIssueTypeId)-1]
+	viper.Set("DefaultIssueTypeId", defaultIssueTypeId)
+
+	viper.WriteConfigAs(fmt.Sprintf("%s/config.yaml", cfgPath))
 }
 
 func init() {
