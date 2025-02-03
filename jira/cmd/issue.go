@@ -23,14 +23,13 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 )
 
-// getIssueCmd represents the issues command when called by the get command
+// getIssueCmd represents the issue command when called by the get command
 var getIssueCmd = &cobra.Command{
 	Use:   "issue",
 	Short: "Get your current Jira issues",
@@ -39,7 +38,8 @@ Issues with status 'Done', 'Rejected', or 'Cancelled' are not returned.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		issues, err := jira.GetAssignedIssues()
 		if err != nil {
-			log.Fatal(fmt.Errorf("failed to get assigned issues: %w", err))
+			fmt.Printf("Failed to get assigned issues: %s\n", err)
+			return
 		}
 
 		// print out issues
@@ -52,18 +52,39 @@ Issues with status 'Done', 'Rejected', or 'Cancelled' are not returned.`,
 	},
 }
 
-// createIssueCmd represents the issues command when called by the create command
+// createIssueCmd represents the issue command when called by the create command
 var createIssueCmd = &cobra.Command{
 	Use:   "issue",
 	Short: "Create a Jira issue",
-	// Long: ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		createIssue()
+		if len(args) != 1 {
+			fmt.Println("Must have exactly 1 argument!")
+			return
+		}
+		jira.GetTransitions(args[0])
 	},
 }
 
 func createIssue() {
 	fmt.Println("creating issue")
+}
+
+// transitionIssueCmd represents the issue command when called by the transition command
+var transitionIssueCmd = &cobra.Command{
+	Use:   "issue",
+	Short: "Transition a Jira issue",
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) != 1 {
+			fmt.Println("Must have exactly 1 argument!")
+			return
+		}
+
+		transitions, err := jira.GetTransitions(args[0])
+		if err != nil {
+			fmt.Printf("Failed to get valid transitions for issue: %s\n", err)
+			return
+		}
+	},
 }
 
 func init() {
