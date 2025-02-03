@@ -25,20 +25,22 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/eeternalsadness/jira/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/eeternalsadness/jira/util"
 )
 
-var cfgFile string
-var cfgPath string
-var jira util.Jira
+var (
+	cfgFile string
+	cfgPath string
+	jira    util.Jira
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "jira",
 	Short: "A CLI tool to do common Jira tasks",
-	Long: `This CLI tool aims to carry out common Jira tasks, helping you to stay in the command line instead of breaking your workflow and going to your web browser for Jira tasks.`,
+	Long:  `This CLI tool aims to carry out common Jira tasks, helping you to stay in the command line instead of breaking your workflow and going to your web browser for Jira tasks.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -53,15 +55,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/jira/config.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func initConfig() {
@@ -73,21 +67,21 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-    cfgPath = fmt.Sprintf("%s/.config/jira/", home)
+		cfgPath = fmt.Sprintf("%s/.config/jira/", home)
 		viper.AddConfigPath(cfgPath)
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
 	}
 
-  // TODO: is it possible to check which command was called?
+	// TODO: is it possible to check which command was called?
 	if err := viper.ReadInConfig(); err == nil {
-    if cfgFile != "" {
-      fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
-    }
-    // get jira config
-    viper.Unmarshal(&jira)
+		if cfgFile != "" {
+			fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		}
+		// get jira config
+		viper.Unmarshal(&jira)
 
-  } else if _, errStat := os.Stat(cfgFile); cfgFile != "" && os.IsNotExist(errStat) {
-    fmt.Fprintln(os.Stderr, "Config file not found: ", viper.ConfigFileUsed())
-  }
+	} else if _, errStat := os.Stat(cfgFile); cfgFile != "" && os.IsNotExist(errStat) {
+		fmt.Fprintln(os.Stderr, "Config file not found: ", viper.ConfigFileUsed())
+	}
 }

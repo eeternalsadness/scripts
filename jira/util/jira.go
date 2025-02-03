@@ -18,27 +18,38 @@ func (jira *Jira) getAuthToken() string {
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-func (jira *Jira) CallApi(path string, method string) ([]byte, error) {
-	// TODO: add actual error handling
+func (jira *Jira) callApi(path string, method string, body io.Reader) ([]byte, error) {
+	// form http request
 	client := &http.Client{}
-	req, err := http.NewRequest(method, fmt.Sprintf("https://%s/%s", jira.Domain, path), nil)
+	req, err := http.NewRequest(method, fmt.Sprintf("https://%s/%s", jira.Domain, path), body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to form a HTTP request: %w", err)
 	}
 
+	// set headers
 	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", jira.getAuthToken()))
 	req.Header.Add("Accept", "application/json")
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
 
+	// send http request
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call the Jira API: %w", err)
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	// read response
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read the response from the Jira API: %w", err)
 	}
 
-	return body, nil
+	// non-200 status code
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return nil, fmt.Errorf("%s", resp.Status)
+	}
+
+	return respBody, nil
 }

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -14,7 +15,7 @@ type Transition struct {
 func (jira *Jira) GetTransitions(issueId string) ([]Transition, error) {
 	// call api
 	path := fmt.Sprintf("rest/api/3/issue/%s/transitions", issueId)
-	resp, err := jira.CallApi(path, "GET")
+	resp, err := jira.callApi(path, "GET", nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call Jira API: %w", err)
 	}
@@ -46,4 +47,22 @@ func (jira *Jira) GetTransitions(issueId string) ([]Transition, error) {
 	}
 
 	return outTransitions, nil
+}
+
+func (jira *Jira) TransitionIssue(issueId string, transitionId string) error {
+	// call api
+	body := fmt.Sprintf(`{
+    "transition": {
+      "id": "%s"
+    }
+  }`, transitionId)
+	path := fmt.Sprintf("rest/api/3/issue/%s/transitions", issueId)
+	resp, err := jira.callApi(path, "POST", bytes.NewBuffer([]byte(body)))
+	if err != nil {
+		return fmt.Errorf("failed to call Jira API: %w", err)
+	}
+
+	fmt.Println(string(resp))
+
+	return nil
 }

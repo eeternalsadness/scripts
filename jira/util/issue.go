@@ -19,7 +19,7 @@ func (jira *Jira) GetAssignedIssues() ([]Issue, error) {
 	jql := url.QueryEscape("assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)")
 	fields := url.QueryEscape("summary,status")
 	path := fmt.Sprintf("rest/api/3/search/jql?jql=%s&fields=%s", jql, fields)
-	resp, err := jira.CallApi(path, "GET")
+	resp, err := jira.callApi(path, "GET", nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call Jira API: %w", err)
 	}

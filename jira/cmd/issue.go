@@ -22,10 +22,13 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"text/tabwriter"
 
+	"github.com/eeternalsadness/jira/util"
 	"github.com/spf13/cobra"
 )
 
@@ -57,16 +60,7 @@ var createIssueCmd = &cobra.Command{
 	Use:   "issue",
 	Short: "Create a Jira issue",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("Must have exactly 1 argument!")
-			return
-		}
-		jira.GetTransitions(args[0])
 	},
-}
-
-func createIssue() {
-	fmt.Println("creating issue")
 }
 
 // transitionIssueCmd represents the issue command when called by the transition command
@@ -79,15 +73,62 @@ var transitionIssueCmd = &cobra.Command{
 			return
 		}
 
-		transitions, err := jira.GetTransitions(args[0])
+		issueId := args[0]
+		transitions, err := jira.GetTransitions(issueId)
 		if err != nil {
 			fmt.Printf("Failed to get valid transitions for issue: %s\n", err)
+			return
+		}
+
+		transition, err := selectTransition(transitions)
+		if err != nil {
+			fmt.Printf("Failed when selecting a transition: %s\n", err)
+			return
+		}
+
+		err = jira.TransitionIssue(issueId, transition.Id)
+		if err != nil {
+			fmt.Printf("Failed when transitioning issue %s: %s\n", issueId, err)
 			return
 		}
 	},
 }
 
+func selectTransition(transitions []util.Transition) (util.Transition, error) {
+	// print out available transitions
+	fmt.Println("Available transitions:")
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "#\tName\tCategory\t")
+	for i, transition := range transitions {
+		fmt.Fprintf(w, "%d\t%s\t%s\t\n", i+1, transition.Name, transition.Category)
+	}
+	w.Flush()
+
+	// prompt for transition
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Printf("\nEnter the # to transition to [1 - %d]: ", len(transitions))
+	inputStr, err := reader.ReadString('\n')
+	if err != nil {
+		return util.Transition{}, err
+	}
+	inputStr = inputStr[:len(inputStr)-1]
+
+	// check input value
+	transitionIndex, err := strconv.ParseInt(inputStr, 10, 64)
+	if err != nil {
+		return util.Transition{}, err
+	}
+
+	// check if index value is valid
+	if transitionIndex <= 0 || transitionIndex > int64(len(transitions)) {
+		return util.Transition{}, fmt.Errorf("transition # be a number between 1 and %d (inclusive)", len(transitions))
+	}
+
+	return transitions[transitionIndex-1], nil
+}
+
 func init() {
 	getCmd.AddCommand(getIssueCmd)
 	createCmd.AddCommand(createIssueCmd)
+	transitionCmd.AddCommand(transitionIssueCmd)
 }
