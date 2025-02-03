@@ -91,6 +91,8 @@ var transitionIssueCmd = &cobra.Command{
 			fmt.Printf("Failed when transitioning issue %s: %s\n", issueId, err)
 			return
 		}
+
+		fmt.Printf("Issue %s transitioned to '%s'.", issueId, transition.Name)
 	},
 }
 
