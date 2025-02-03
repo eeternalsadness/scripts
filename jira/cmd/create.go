@@ -22,8 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -31,9 +29,6 @@ import (
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a Jira resource",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
-	},
 }
 
 func init() {

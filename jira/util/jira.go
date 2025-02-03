@@ -49,7 +49,22 @@ func (jira *Jira) callApi(path string, method string, body io.Reader) ([]byte, e
 
 	// non-200 status code
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, fmt.Errorf("%s", resp.Status)
+		if len(respBody) > 0 {
+			var data map[string]interface{}
+			err = json.Unmarshal(respBody, &data)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse JSON response from Jira API: %w", err)
+			}
+
+			jsonOutput, err := json.MarshalIndent(data, "", "  ")
+			if err != nil {
+				return nil, fmt.Errorf("failed to format JSON response from Jira API: %w", err)
+			}
+
+			return nil, fmt.Errorf("%s:\n%s", resp.Status, jsonOutput)
+		} else {
+			return nil, fmt.Errorf("%s", resp.Status)
+		}
 	}
 
 	return respBody, nil

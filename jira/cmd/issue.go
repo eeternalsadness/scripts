@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/eeternalsadness/jira/util"
@@ -59,7 +60,43 @@ Issues with status 'Done', 'Rejected', or 'Cancelled' are not returned.`,
 var createIssueCmd = &cobra.Command{
 	Use:   "issue",
 	Short: "Create a Jira issue",
+	Long:  `Create a Jira issue in the 'KV FnB Web' project (default). The issue is assigned to the current user by default.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		reader := bufio.NewReader(os.Stdin)
+
+		// prompt for issue's title
+		fmt.Print("Enter the issue's title: ")
+		title, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Printf("Failed to read user input: %s\n", err)
+		}
+		title = title[:len(title)-1]
+
+		// title can't be empty
+		if len(strings.TrimSpace(title)) == 0 {
+			fmt.Println("Issue's title can't be empty!")
+			return
+		}
+
+		// prompt for issue's description
+		fmt.Print("Enter the issue's description (optional): ")
+		description, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Printf("Failed to read user input: %s\n", err)
+			return
+		}
+		description = description[:len(description)-1]
+
+		// create issue
+		// TODO: find a way to create issues for different projects
+		// TODO: find a way to create different issue types
+		issueKey, err := jira.CreateIssue("10140", title, description)
+		if err != nil {
+			fmt.Printf("Failed to create Jira issue: %s\n", err)
+			return
+		}
+
+		fmt.Printf("Issue '%s' created.\nURL: https://%s/browse/%s.\n", title, jira.Domain, issueKey)
 	},
 }
 
@@ -92,7 +129,7 @@ var transitionIssueCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Printf("Issue %s transitioned to '%s'.", issueId, transition.Name)
+		fmt.Printf("Issue %s transitioned to '%s'.\n", issueId, transition.Name)
 	},
 }
 

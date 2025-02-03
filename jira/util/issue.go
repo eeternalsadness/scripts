@@ -87,6 +87,7 @@ func (jira *Jira) CreateIssue(projectId string, title string, description string
 	}
 
 	// form request body
+	// TODO: allow for different issue types to be created
 	body := fmt.Sprintf(`{
     "fields": {
       "assignee": {
@@ -94,6 +95,9 @@ func (jira *Jira) CreateIssue(projectId string, title string, description string
       },
       "project": {
         "id": "%s"
+      },
+      "issuetype": {
+        "id": "10101"
       },
       %s
       "summary": "%s"
@@ -116,7 +120,7 @@ func (jira *Jira) CreateIssue(projectId string, title string, description string
 	}
 
 	// transform json to output
-	issueUrl := data["self"].(string)
+	issueKey := data["key"].(string)
 
-	return issueUrl, nil
+	return issueKey, nil
 }
