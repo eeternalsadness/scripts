@@ -106,14 +106,19 @@ func selectTransition(transitions []util.Transition) (util.Transition, error) {
 
 	// prompt for transition
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Printf("\nEnter the # to transition to [1 - %d]: ", len(transitions))
+	fmt.Printf("\nEnter the # to transition to [1 - %d, or 'q' to quit]: ", len(transitions))
 	inputStr, err := reader.ReadString('\n')
 	if err != nil {
 		return util.Transition{}, err
 	}
 	inputStr = inputStr[:len(inputStr)-1]
 
-	// check input value
+	// quit if user types 'q'
+	if inputStr == "q" {
+		os.Exit(0)
+	}
+
+	// check number value
 	transitionIndex, err := strconv.ParseInt(inputStr, 10, 64)
 	if err != nil {
 		return util.Transition{}, err
