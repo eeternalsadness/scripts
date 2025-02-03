@@ -22,7 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -31,9 +31,12 @@ import (
 var transitionCmd = &cobra.Command{
 	Use:   "transition",
 	Short: "Transition an issue",
-	Long: ``,
+	// Long: ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("transition called")
+		if len(args) != 1 {
+			log.Fatal("Must have exactly 1 argument!")
+		}
+		jira.GetTransitions(args[0])
 	},
 }
 

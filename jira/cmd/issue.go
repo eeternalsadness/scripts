@@ -23,23 +23,32 @@ package cmd
 
 import (
 	"fmt"
-  "os"
-  "encoding/json"
-  "net/url"
-  "text/tabwriter"
+	"log"
+	"os"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"github.com/eeternalsadness/jira/util"
 )
 
 // getIssueCmd represents the issues command when called by the get command
 var getIssueCmd = &cobra.Command{
 	Use:   "issue",
 	Short: "Get your current Jira issues",
-  Long: `Get Jira issues that are assigned to the current user (you).
+	Long: `Get Jira issues that are assigned to the current user (you).
 Issues with status 'Done', 'Rejected', or 'Cancelled' are not returned.`,
 	Run: func(cmd *cobra.Command, args []string) {
-    getAssignedIssues()
+		issues, err := jira.GetAssignedIssues()
+		if err != nil {
+			log.Fatal(fmt.Errorf("failed to get assigned issues: %w", err))
+		}
+
+		// print out issues
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(w, "ID\tIssue\tStatus\t")
+		for _, issue := range issues {
+			fmt.Fprintf(w, "%s\t[%s] %s\t%s\t\n", issue.Id, issue.Key, issue.Title, issue.Status)
+		}
+		w.Flush()
 	},
 }
 
@@ -47,34 +56,14 @@ Issues with status 'Done', 'Rejected', or 'Cancelled' are not returned.`,
 var createIssueCmd = &cobra.Command{
 	Use:   "issue",
 	Short: "Create a Jira issue",
-  //Long: ``,
+	// Long: ``,
 	Run: func(cmd *cobra.Command, args []string) {
-    createIssue()
+		createIssue()
 	},
 }
 
-func getAssignedIssues() {
-  // call api
-  jql := url.QueryEscape("assignee = currentuser() AND status NOT IN (Done, Rejected, Cancelled)")
-  fields := url.QueryEscape("summary,status")
-  path := fmt.Sprintf("rest/api/3/search/jql?jql=%s&fields=%s&fieldsByKeys=true", jql, fields)
-  resp := jira.CallApi(path, "GET")
-
-  // parse json data
-  var issues util.Issues
-  json.Unmarshal(resp, &issues)
-
-  // print out issues
-  w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-  fmt.Fprintln(w, "ID\tIssue\tStatus\t")
-  for _, issue := range issues.Issues {
-    fmt.Fprintf(w, "%s\t[%s] %s\t%s\t\n", issue.Id, issue.Key, issue.Fields.Summary, issue.Fields.Status.StatusCategory.Name)
-  }
-  w.Flush()
-}
-
 func createIssue() {
-  fmt.Println("creating issue")
+	fmt.Println("creating issue")
 }
 
 func init() {
