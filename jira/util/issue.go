@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -26,7 +27,10 @@ func (jira *Jira) GetAssignedIssues() ([]Issue, error) {
 
 	// parse json data
 	var data map[string]interface{}
-	json.Unmarshal(resp, &data)
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal JSON response from Jira API: %w", err)
+	}
 
 	// transform json into output
 	issues := data["issues"].([]interface{})
@@ -53,4 +57,56 @@ func (jira *Jira) GetAssignedIssues() ([]Issue, error) {
 	}
 
 	return outIssues, nil
+}
+
+func (jira *Jira) CreateIssue(projectId string, title string, description string) error {
+	// get current user id
+	currentUserId, err := jira.getCurrentUserId()
+	if err != nil {
+		return fmt.Errorf("failed to get current user ID: %w", err)
+	}
+
+	// form description field if passed in
+	descriptionField := ""
+	if description != "" {
+		descriptionField = fmt.Sprintf(`"description": {
+      "content": [
+        {
+          "content": [
+            {
+              "text": "%s",
+              "type": "text"
+            }
+          ],
+          "type": "paragraph"
+        }
+      ],
+      "type": "doc",
+      "version": 1
+    },`, description)
+	}
+
+	// form request body
+	body := fmt.Sprintf(`{
+    "fields": {
+      "assignee": {
+        "id": "%s"
+      },
+      "project": {
+        "id": "%s"
+      },
+      %s
+      "summary": "%s"
+    },
+    "update": {}
+  }`, currentUserId, projectId, descriptionField, title)
+
+	// call api
+	path := "rest/api/3/issue"
+	_, err = jira.callApi(path, "POST", bytes.NewBuffer([]byte(body)))
+	if err != nil {
+		return fmt.Errorf("failed to call Jira API: %w", err)
+	}
+
+	return nil
 }
