@@ -59,11 +59,11 @@ func (jira *Jira) GetAssignedIssues() ([]Issue, error) {
 	return outIssues, nil
 }
 
-func (jira *Jira) CreateIssue(projectId string, title string, description string) error {
+func (jira *Jira) CreateIssue(projectId string, title string, description string) (string, error) {
 	// get current user id
 	currentUserId, err := jira.getCurrentUserId()
 	if err != nil {
-		return fmt.Errorf("failed to get current user ID: %w", err)
+		return "", fmt.Errorf("failed to get current user ID: %w", err)
 	}
 
 	// form description field if passed in
@@ -103,10 +103,20 @@ func (jira *Jira) CreateIssue(projectId string, title string, description string
 
 	// call api
 	path := "rest/api/3/issue"
-	_, err = jira.callApi(path, "POST", bytes.NewBuffer([]byte(body)))
+	resp, err := jira.callApi(path, "POST", bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		return fmt.Errorf("failed to call Jira API: %w", err)
+		return "", fmt.Errorf("failed to call Jira API: %w", err)
 	}
 
-	return nil
+	// parse json data
+	var data map[string]interface{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return "", fmt.Errorf("failed to unmarshal JSON response from Jira API: %w", err)
+	}
+
+	// transform json to output
+	issueUrl := data["self"].(string)
+
+	return issueUrl, nil
 }
