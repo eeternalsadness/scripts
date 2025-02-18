@@ -23,7 +23,7 @@ if [[ ! -f "$config_file_path" ]]; then
   exit 1
 fi
 
-# NOTE: copy config file to ~/.ssh/config & replacing it
-cp "$config_file_path" "$HOME/.ssh/config"
+# NOTE: symlink config file to ~/.ssh/config
+ln -sf "$config_file_path" "$HOME/.ssh/config"
 
 echo -e "\nSwitched to '$config_file'"
