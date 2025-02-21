@@ -26,20 +26,20 @@ project_ids = {
     # "ordering": 1511,
     # "report": 1510,
     # "mhql": 1620,
-    # "sync_gateway": 1354,
-    # "partner": 458,
-    # "promotion": 495,
+    "sync_gateway": 1354,
+    "partner": 458,
+    "promotion": 495,
     # "webhook": 67,
     # "webhook_service": 110,
-    # "tracking": 543,
-    # "tracking_v4": 1544,
+    "tracking": 543,
+    "tracking_v4": 1544,
     # "import_export": 1509,
-    # "import_export_v2": 1548,
-    # "sms": 1013,
-    # "sms_v2": 1630,
-    # "notification": 786,
-    # "einvoice": 957,
-    # "background_jobs": 989,
+    "import_export_v2": 1548,
+    "sms": 1013,
+    "sms_v2": 1630,
+    "notification": 786,
+    "einvoice": 957,
+    "background_jobs": 989,
     "web_pos": 143,
     # "eventstore_db": 1019,
     # "identity_db": 1469,
@@ -53,7 +53,7 @@ project_ids = {
 num_projects = len(project_ids.keys())
 
 team_names = [
-    # "wakanda",
+    "wakanda",
     "phoenix",
     "team2",
     "inpay",
@@ -94,6 +94,15 @@ def create_branch(project_id, team_name):
         "POST",
         HEADERS,
         f"projects/{project_id}/repository/branches?branch=development-{team_name}&ref=development",
+    )
+    return response
+
+
+def create_pipeline(project_id, team_name):
+    response = call_gitlab_api(
+        "POST",
+        HEADERS,
+        f"projects/{project_id}/pipeline?ref=development-{team_name}",
     )
     return response
 
@@ -161,11 +170,18 @@ def execute():
                 and not project_queue.empty()
             ):
                 project = project_queue.get()
+                # print(
+                #    f"Creating branch for team '{project['team']}' in '{project['project_name']}'"
+                # )
+                # create_branch(project["project_id"], project["team"])
                 print(
-                    f"Creating branch for team '{project["team"]}' in '{project["project_name"]}'"
+                    f"Creating pipeline for branch 'development-{project['team']}' in '{project['project_name']}'"
                 )
-                create_branch(project["project_id"], project["team"])
-                execution_dict[f"{project["team"]}/{project["project_name"]}"] = project
+                create_pipeline_response = create_pipeline(
+                    project["project_id"], project["team"]
+                )
+                project["pipeline_id"] = create_pipeline_response["body"]["id"]
+                execution_dict[f"{project['team']}/{project['project_name']}"] = project
 
             # NOTE: wait for pipelines to run, otherwise calling the API might result in an error
             print("Waiting for pipelines to run...")
@@ -187,7 +203,8 @@ Current pipelines:""")
                 response = call_gitlab_api(
                     "GET",
                     HEADERS,
-                    f"projects/{project["project_id"]}/pipelines/latest?ref=development-{project["team"]}",
+                    # f"projects/{project['project_id']}/pipelines/latest?ref=development-{project['team']}",
+                    f"projects/{project['project_id']}/pipelines/{project['pipeline_id']}",
                 )
 
                 # NOTE: update overall status based on the current pipelines status
@@ -213,7 +230,7 @@ Current pipelines:""")
                             project["project_name"]
                         )
                         execution_done.append(execution)
-                print(f"    {execution}: {response["body"]["status"]}")
+                print(f"    {execution}: {response['body']['status']}")
             print_current_status(status_dict)
 
             # NOTE: remove pipelines that are done from execution "list"
