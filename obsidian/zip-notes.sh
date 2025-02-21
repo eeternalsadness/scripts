@@ -2,10 +2,13 @@
 
 zip_file_name="kv-obsidian.zip"
 
-if [[ ! -d $OBSIDIAN ]]; then
+if [[ ! -d "$OBSIDIAN" ]]; then
   echo "Cannot find Obsidian folder at '$OBSIDIAN'. Please check if the path is correct."
 fi
 
-cd $OBSIDIAN
+cd "$OBSIDIAN" || exit 1
 
-zip -ur "$zip_file_name" *
+echo "Deleting old archive..."
+rm "$zip_file_name"
+echo "Zipping notes..."
+zip -r "$zip_file_name" *
