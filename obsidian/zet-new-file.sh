@@ -25,17 +25,19 @@ Tags:
 Links:
 
 EOT
-  create_note_success=$?
 
   # NOTE: append to daily note
-  daily_file_name="$(date +"%Y-%m-%d")"
-  daily_file_path="$OBSIDIAN/Periodic Notes/0-Daily/${daily_file_name}.md"
+  create_note_success=$?
+  if [[ -n "$OBSIDIAN_USE_DAILY_NOTES" ]]; then
+    daily_file_name="$(date +"%Y-%m-%d")"
+    daily_file_path="$OBSIDIAN/Periodic Notes/0-Daily/${daily_file_name}.md"
 
-  if [[ ! -f "$daily_file_path" ]]; then
-    bash $SCRIPTS/obsidian/daily-note.sh
+    if [[ ! -f "$daily_file_path" ]]; then
+      bash $SCRIPTS/obsidian/daily-note.sh
+    fi
+
+    [[ "$create_note_success" == 0 ]] && echo "[[$file_name]]" >>"$daily_file_path"
   fi
-
-  [[ "$create_note_success" == 0 ]] && echo "[[$file_name]]" >>"$daily_file_path"
 else
   echo "File '$file_name' already exists at '$find_output'"
 fi
