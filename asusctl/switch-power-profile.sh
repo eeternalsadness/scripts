@@ -5,19 +5,22 @@ case "$1" in
   # NOTE: on battery, maximum power saving
   asusctl profile -P Quiet
   supergfxctl -m Integrated
-  # TODO: add panel refresh rate & brightness update
+  brightnessctl -c backlight s 20%
+  # TODO: add panel refresh rate
   ;;
 "med")
   # NOTE: on AC power, moderate performance with low fan noise
   asusctl profile -P Quiet
   supergfxctl -m Hybrid
-  # TODO: add panel refresh rate & brightness update
+  brightnessctl -c backlight s 50%
+  # TODO: add panel refresh rate
   ;;
 "high")
   # NOTE: on AC power, max performance with max fan noise
   asusctl profile -P Balanced
   supergfxctl -m Hybrid
-  # TODO: add panel refresh rate & brightness update
+  brightnessctl -c backlight s 50%
+  # TODO: add panel refresh rate
   ;;
 *)
   echo "Invalid power profile '$1'!"
