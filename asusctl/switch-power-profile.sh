@@ -8,21 +8,21 @@ case "$1" in
   asusctl profile -P Quiet
   supergfxctl -m Integrated
   brightnessctl -c backlight s 20%
-  sed -i 's/^monitor=/monitor=,2560x1600@60.00,auto,auto/' "$hyprland_config_file"
+  sed -i 's/^monitor=.*/monitor=,2560x1600@60.00,auto,auto/' "$hyprland_config_file"
   ;;
 "med")
   # NOTE: on AC power, moderate performance with low fan noise
   asusctl profile -P Quiet
   supergfxctl -m Hybrid
   brightnessctl -c backlight s 50%
-  sed -i 's/^monitor=/monitor=,2560x1600@120.00,auto,auto/' "$hyprland_config_file"
+  sed -i 's/^monitor=.*/monitor=,2560x1600@120.00,auto,auto/' "$hyprland_config_file"
   ;;
 "high")
   # NOTE: on AC power, max performance with max fan noise
   asusctl profile -P Balanced
   supergfxctl -m Hybrid
   brightnessctl -c backlight s 50%
-  sed -i 's/^monitor=/monitor=,2560x1600@120.00,auto,auto/' "$hyprland_config_file"
+  sed -i 's/^monitor=.*/monitor=,2560x1600@120.00,auto,auto/' "$hyprland_config_file"
   ;;
 *)
   echo "Invalid power profile '$1'!"
