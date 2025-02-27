@@ -3,7 +3,7 @@
 source $SCRIPTS/tmux/common.sh
 
 if [[ -z "$TMUX" ]]; then
-  echo "Must be in a tmux session! Use 'tinit' to start a new tmux session."
+  echo "Must be in a tmux session! Use 'ti' to start a new tmux session."
   exit 1
 fi
 
