@@ -39,3 +39,4 @@ sudo pacman -S --needed wikiman wget
 
 echo "Next steps:"
 echo "- Install & configure asusctl"
+echo "- Install steam"
