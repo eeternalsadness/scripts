@@ -6,8 +6,8 @@ echo "Bootstrapping Arch Linux"
 # Install packages
 ##############################################
 
-# prerequisites for devbox init script
-sudo pacman -S --needed git curl xz
+# essentials
+sudo pacman -S --needed git curl wget xz traceroute
 
 # hyprland requirements
 sudo pacman -S --needed uwsm wofi dolphin waybar fnott xdg-desktop-portal-hyprland hyprpolkitagent qt5-wayland qt6-wayland hyprlock
@@ -31,7 +31,7 @@ sudo pacman -S --needed wl-clipboard
 sudo pacman -S --needed qutebrowser
 
 # misc
-sudo pacman -S --needed wikiman wget
+sudo pacman -S --needed wikiman
 
 ##############################################
 # Next steps
