@@ -21,8 +21,16 @@ case "$1" in
   sed -i 's/^monitor=.*/monitor=,2560x1600@120.00,auto,auto/' "$hyprland_config_file"
   ;;
 "high")
-  # NOTE: on AC power, max performance with max fan noise
+  # NOTE: on AC power, high performance with high fan noise
   asusctl profile -P Balanced
+  supergfxctl -m Hybrid
+  sudo sed -i 's/"mode": ".*"/"mode": "Hybrid"/' "$supergfxd_config_file"
+  brightnessctl -c backlight s 50%
+  sed -i 's/^monitor=.*/monitor=,2560x1600@120.00,auto,auto/' "$hyprland_config_file"
+  ;;
+"max")
+  # NOTE: on AC power, max performance with max fan noise
+  asusctl profile -P Performance
   supergfxctl -m Hybrid
   sudo sed -i 's/"mode": ".*"/"mode": "Hybrid"/' "$supergfxd_config_file"
   brightnessctl -c backlight s 50%
@@ -30,7 +38,7 @@ case "$1" in
   ;;
 *)
   echo "Invalid power profile '$1'!"
-  echo "Valid profiles are: low, med, high"
+  echo "Valid profiles are: low, med, high, max"
   exit 1
   ;;
 esac
