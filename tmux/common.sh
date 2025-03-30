@@ -27,7 +27,7 @@ new-workspace() {
   tmux new-window -t "${session_name}:2" -n "obsidian"
   tmux send-keys -t "${session_name}:2" "cd \"${OBSIDIAN}\"" C-m
   tmux send-keys -t "${session_name}:2" "nvim ." C-m
-  tmux new-window -t "${session_name}:3" -n "bash"
+  tmux new-window -t "${session_name}:3" -n "shell"
   tmux send-keys -t "${session_name}:3" "cd ${git_repo}" C-m
   tmux select-window -t "${session_name}:1"
 
