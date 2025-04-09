@@ -13,5 +13,4 @@ fi
 
 curl -s --request "$method" \
   --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
-  "https://${GITLAB_HOST}/api/v4/${api_path}" |
-  jq
+  "https://${GITLAB_HOST}/api/v4/${api_path}"
