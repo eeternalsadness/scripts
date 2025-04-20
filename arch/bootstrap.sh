@@ -7,32 +7,36 @@ echo "Bootstrapping Arch Linux"
 ##############################################
 
 # essentials
-sudo pacman -S --needed git curl wget xz traceroute
+sudo pacman -S --needed --noconfirm git curl wget xz traceroute kitty which
 
-# hyprland requirements
-sudo pacman -S --needed uwsm wofi dolphin waybar fnott xdg-desktop-portal-hyprland hyprpolkitagent qt5-wayland qt6-wayland hyprlock
+# hyprland
+sudo pacman -S --needed --noconfirm uwsm wofi dolphin waybar fnott xdg-desktop-portal-hyprland hyprpolkitagent qt5-wayland qt6-wayland hyprlock hyprland
+systemctl --user enable --now waybar.service
 
 # audio
-sudo pacman -S --needed pipewire wireplumber
+sudo pacman -S --needed --noconfirm pipewire wireplumber
 
 # bluetooth
-sudo pacman -S --needed bluez bluez-utils
+sudo pacman -S --needed --noconfirm bluez bluez-utils
 systemctl enable --now bluetooth.service
 
 # power management
-sudo pacman -S --needed cpupower brightnessctl
+sudo pacman -S --needed --noconfirm cpupower brightnessctl
 # allow non-root user to change brightness
 usermod -aG video bach
 cat 'ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chgrp video $sys$devpath/brightness", RUN+="/bin/chmod g+w $sys$devpath/brightness"' >/etc/udev/rules.d/backlight.rules
 
 # screenshot
-sudo pacman -S --needed grim slurp
+sudo pacman -S --needed --noconfirm grim slurp
 
 # clipboard management
-sudo pacman -S --needed wl-clipboard
+sudo pacman -S --needed --noconfirm wl-clipboard
 
 # qutebrowser
-sudo pacman -S --needed qutebrowser
+sudo pacman -S --needed --noconfirm qutebrowser
+
+# font
+sudo pacman -S --needed --noconfirm otf-comicshanns-nerd
 
 ##############################################
 # Next steps
