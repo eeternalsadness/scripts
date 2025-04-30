@@ -14,7 +14,7 @@ sudo pacman -S --needed --noconfirm uwsm wofi dolphin waybar fnott xdg-desktop-p
 systemctl --user enable --now waybar.service
 
 # audio
-sudo pacman -S --needed --noconfirm pipewire wireplumber
+sudo pacman -S --needed --noconfirm pipewire wireplumber pipewire-pulseaudio
 
 # bluetooth
 sudo pacman -S --needed --noconfirm bluez bluez-utils
