@@ -22,11 +22,9 @@ new-workspace() {
 
   tmux new-session -d -s "$session_name"
   tmux rename-window -t "${session_name}:1" "repo"
-  tmux send-keys -t "${session_name}:1" "cd ${git_repo}" C-m
-  tmux send-keys -t "${session_name}:1" "nvim ." C-m
+  tmux send-keys -t "${session_name}:1" "nvim ${git_repo}" C-m
   tmux new-window -t "${session_name}:2" -n "obsidian"
-  tmux send-keys -t "${session_name}:2" "cd \"${OBSIDIAN}\"" C-m
-  tmux send-keys -t "${session_name}:2" "nvim ." C-m
+  tmux send-keys -t "${session_name}:2" "nvim \"${OBSIDIAN}\"" C-m
   tmux new-window -t "${session_name}:3" -n "shell"
   tmux send-keys -t "${session_name}:3" "cd ${git_repo}" C-m
   tmux select-window -t "${session_name}:1"
