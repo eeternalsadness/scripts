@@ -7,7 +7,7 @@ echo "Bootstrapping Arch Linux"
 ##############################################
 
 # essentials
-sudo pacman -S --needed --noconfirm git curl wget xz traceroute kitty which
+sudo pacman -S --needed --noconfirm git curl wget xz kitty which
 
 # hyprland
 sudo pacman -S --needed --noconfirm uwsm wofi dolphin waybar fnott xdg-desktop-portal-hyprland hyprpolkitagent qt5-wayland qt6-wayland hyprlock hyprland
@@ -37,6 +37,9 @@ sudo pacman -S --needed --noconfirm qutebrowser
 
 # font
 sudo pacman -S --needed --noconfirm otf-comicshanns-nerd
+
+# network debugging
+sudo pacman -S --needed --noconfirm traceroute tcpdump net-tools
 
 # yay
 sudo pacman -S --needed --noconfirm git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay/
