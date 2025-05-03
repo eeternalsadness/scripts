@@ -45,6 +45,12 @@ sudo pacman -S --needed --noconfirm git base-devel && git clone https://aur.arch
 sudo yay -S --needed --noconfirm snapd
 sudo systemctl enable --now snapd.socket
 
+# homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# zsh
+brew install zsh-autosuggestions zsh-syntax-highlighting pure
+
 ##############################################
 # Next steps
 ##############################################
