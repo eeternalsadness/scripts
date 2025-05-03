@@ -38,6 +38,13 @@ sudo pacman -S --needed --noconfirm qutebrowser
 # font
 sudo pacman -S --needed --noconfirm otf-comicshanns-nerd
 
+# yay
+sudo pacman -S --needed --noconfirm git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay/
+
+# snap
+sudo yay -S --needed --noconfirm snapd
+sudo systemctl enable --now snapd.socket
+
 ##############################################
 # Next steps
 ##############################################
