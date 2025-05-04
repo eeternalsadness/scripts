@@ -39,7 +39,7 @@ sudo pacman -S --needed --noconfirm qutebrowser
 sudo pacman -S --needed --noconfirm otf-comicshanns-nerd
 
 # network debugging
-sudo pacman -S --needed --noconfirm traceroute tcpdump net-tools
+sudo pacman -S --needed --noconfirm traceroute tcpdump net-tools nmap
 
 # yay
 sudo pacman -S --needed --noconfirm git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay/
