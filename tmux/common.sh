@@ -22,6 +22,7 @@ new-workspace() {
 
   tmux new-session -d -s "$session_name"
   tmux rename-window -t "${session_name}:1" "repo"
+  # NOTE: need to cd first so that fzf works correctly inside neovim
   tmux send-keys -t "${session_name}:1" "cd ${git_repo}" C-m
   tmux send-keys -t "${session_name}:1" "nvim ." C-m
   tmux new-window -t "${session_name}:2" -n "obsidian"
