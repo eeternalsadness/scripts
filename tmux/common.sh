@@ -20,16 +20,16 @@ new-workspace() {
     exit 0
   fi
 
-  tmux new-session -d -s "$session_name"
+  tmux new-session -d -s "$session_name" -c "$git_repo"
   tmux rename-window -t "${session_name}:1" "repo"
   # NOTE: need to cd first so that fzf works correctly inside neovim
-  tmux send-keys -t "${session_name}:1" "cd ${git_repo}" C-m
+  #tmux send-keys -t "${session_name}:1" "cd ${git_repo}" C-m
   tmux send-keys -t "${session_name}:1" "nvim ." C-m
-  tmux new-window -t "${session_name}:2" -n "obsidian"
-  tmux send-keys -t "${session_name}:2" "cd \"${OBSIDIAN}\"" C-m
+  tmux new-window -t "${session_name}:2" -n "obsidian" -c "$OBSIDIAN"
+  #tmux send-keys -t "${session_name}:2" "cd \"${OBSIDIAN}\"" C-m
   tmux send-keys -t "${session_name}:2" "nvim ." C-m
-  tmux new-window -t "${session_name}:3" -n "shell"
-  tmux send-keys -t "${session_name}:3" "cd ${git_repo}" C-m
+  tmux new-window -t "${session_name}:3" -n "shell" -c "$git_repo"
+  #tmux send-keys -t "${session_name}:3" "cd ${git_repo}" C-m
   tmux select-window -t "${session_name}:1"
 
   echo "$session_name"
