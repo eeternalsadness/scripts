@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 _complete_ssh_hosts() {
   COMPREPLY=()
