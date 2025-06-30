@@ -9,8 +9,8 @@ fi
 
 # create ssh session if there isn't any
 if [[ -z $(tmux has-session -t ssh) ]]; then
-  tmux new-session -d -s ssh
-  tmux new-window -t "ssh:1" -n "obsidian" -c "$OBSIDIAN"
+  tmux new-session -d -s ssh -c "$OBSIDIAN"
+  tmux rename-window -t "ssh:1" -n "obsidian"
   tmux send-keys -t "ssh:1" "nvim ." C-m
   tmux new-window -t "ssh:2"
 fi
