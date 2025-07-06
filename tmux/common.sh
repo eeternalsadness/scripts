@@ -34,7 +34,7 @@ new-workspace() {
 
 select-git-repo() {
   repo_escaped=$(echo "$REPO" | sed 's/\//\\\//g')
-  repo_dir=$(find -L "$REPO" -maxdepth 3 -type d -name ".git" | sed 's/\/\.git//' | sed "s/${repo_escaped}\///" | fzf --prompt "Select a git repo: ")
+  repo_dir=$(find -L "$REPO" -maxdepth 3 -name ".git" | sed 's/\/\.git//' | sed "s/${repo_escaped}\///" | fzf --prompt "Select a git repo: ")
 
   echo "$repo_dir"
 }
