@@ -18,7 +18,7 @@ execution_dict = {}
 # max 3 concurrent pipelines
 MAX_CONCURRENT_PIPELINES = 3
 
-project_ids = {
+project_names = {
     # "audit_trail": 411,
     # "cpanel": 1210,
     # "identity": 1479,
@@ -52,10 +52,20 @@ project_ids = {
     # "promotion_db": 1351,
     # "sharding_db": 1513,
     # "sync_gateway_db": 1363,
+    "einvoice_backend": 1727,
+    "einvoice_frontend": 1729,
+    "einvoice_search_api": 1730,
+    "einvoice_kafka_site": 1732,
+    "einvoice_log": 1771,
+    "einvoice_operation": 1772,
+    "einvoice_helper": 1789,
+    "einvoice_landing_page": 1790,
+    "einvoice_mail": 1849,
+    "einvoice_tax_hub": 1866,
 }
-num_projects = len(project_ids.keys())
+num_projects = len(project_names.keys())
 
-team_names = [
+branch_names = [
     # "wakanda",
     # "phoenix",
     # "team2",
@@ -81,13 +91,13 @@ def call_gitlab_api(method, headers, path):
 
 
 def populate_project_queue():
-    for project in project_ids:
-        for team_name in team_names:
+    for project in project_names:
+        for branch_name in branch_names:
             project_queue.put(
                 {
-                    "team": team_name,
+                    "team": branch_name,
                     "project_name": project,
-                    "project_id": project_ids[project],
+                    "project_id": project_names[project],
                 }
             )
 
@@ -111,19 +121,19 @@ def create_pipeline(project_id, team_name):
 
 
 def print_current_status(status_dict):
-    for team_name in team_names:
+    for branch_name in branch_names:
         pipelines_ran = (
-            status_dict[team_name]["success"]
-            + status_dict[team_name]["skipped"]
-            + status_dict[team_name]["canceled"]
-            + status_dict[team_name]["failed"]
+            status_dict[branch_name]["success"]
+            + status_dict[branch_name]["skipped"]
+            + status_dict[branch_name]["canceled"]
+            + status_dict[branch_name]["failed"]
         )
         print(f"""
-Team {team_name}:
-    success: {status_dict[team_name]["success"]}
-    skipped: {status_dict[team_name]["skipped"]}
-    canceled: {status_dict[team_name]["canceled"]}
-    failed: {status_dict[team_name]["failed"]}
+Branch {branch_name}:
+    success: {status_dict[branch_name]["success"]}
+    skipped: {status_dict[branch_name]["skipped"]}
+    canceled: {status_dict[branch_name]["canceled"]}
+    failed: {status_dict[branch_name]["failed"]}
     total: {pipelines_ran}/{num_projects}""")
 
 
@@ -132,29 +142,29 @@ def print_final_status(status_dict):
 ===========================================
 
 Result:""")
-    for team_name in team_names:
+    for branch_name in branch_names:
         print(f"""
-Team {team_name}:
-    Success pipelines: {status_dict[team_name]["success"]}/{num_projects}""")
-        if status_dict[team_name]["skipped_pipelines"]:
+Branch {branch_name}:
+    Success pipelines: {status_dict[branch_name]["success"]}/{num_projects}""")
+        if status_dict[branch_name]["skipped_pipelines"]:
             print("    Skipped pipelines:")
-            for skipped_pipeline in status_dict[team_name]["skipped_pipelines"]:
+            for skipped_pipeline in status_dict[branch_name]["skipped_pipelines"]:
                 print(f"        {skipped_pipeline}")
-        if status_dict[team_name]["canceled_pipelines"]:
+        if status_dict[branch_name]["canceled_pipelines"]:
             print("    Canceled pipelines:")
-            for skipped_pipeline in status_dict[team_name]["canceled_pipelines"]:
+            for skipped_pipeline in status_dict[branch_name]["canceled_pipelines"]:
                 print(f"        {skipped_pipeline}")
-        if status_dict[team_name]["failed_pipelines"]:
+        if status_dict[branch_name]["failed_pipelines"]:
             print("    Failed pipelines:")
-            for failed_pipeline in status_dict[team_name]["failed_pipelines"]:
+            for failed_pipeline in status_dict[branch_name]["failed_pipelines"]:
                 print(f"        {failed_pipeline}")
 
 
 def execute():
-    # NOTE: store status of all pipelines for all teams
+    # NOTE: store status of all pipelines for all branches
     status_dict = {}
-    for team_name in team_names:
-        status_dict[team_name] = {
+    for branch_name in branch_names:
+        status_dict[branch_name] = {
             "success": 0,
             "skipped": 0,
             "canceled": 0,
