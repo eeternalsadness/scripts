@@ -15,7 +15,6 @@ project_queue = Queue()
 execution_dict = {}
 
 # NOTE: change the following inputs as necessary
-# max 3 concurrent pipelines
 MAX_CONCURRENT_PIPELINES = 3
 
 project_names = {
@@ -23,7 +22,7 @@ project_names = {
     # "cpanel": 1210,
     # "identity": 1479,
     # "mobile": 1508,
-    #"ordering": 1511,
+    # "ordering": 1511,
     # "digital_marketing": 1352,
     # "miniapp_api": 1502,
     # "report": 1510,
@@ -70,7 +69,9 @@ branch_names = [
     # "development-phoenix",
     # "development-team2",
     # "development-inpay",
-    "development-hydra",
+    # "development-hydra",
+    "dev",
+    "master",
 ]
 
 
@@ -188,13 +189,15 @@ def execute():
                 # )
                 # create_branch(project["project_id"], project["branch"], "development")
                 print(
-                    f"Creating pipeline for branch '{project['branch']}' in '{project['project_name']}'"
+                    f"Creating pipeline for branch '{project['branch']}' in project '{project['project_name']}'"
                 )
                 create_pipeline_response = create_pipeline(
                     project["project_id"], project["branch"]
                 )
                 project["pipeline_id"] = create_pipeline_response["body"]["id"]
-                execution_dict[f"{project['branch']}/{project['project_name']}"] = project
+                execution_dict[f"{project['project_name']}/{project['branch']}"] = (
+                    project
+                )
 
             # NOTE: wait for pipelines to run, otherwise calling the API might result in an error
             print("Waiting for pipelines to run...")
