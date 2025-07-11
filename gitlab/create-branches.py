@@ -23,7 +23,7 @@ project_names = {
     # "cpanel": 1210,
     # "identity": 1479,
     # "mobile": 1508,
-    "ordering": 1511,
+    #"ordering": 1511,
     # "digital_marketing": 1352,
     # "miniapp_api": 1502,
     # "report": 1510,
@@ -66,11 +66,11 @@ project_names = {
 num_projects = len(project_names.keys())
 
 branch_names = [
-    # "wakanda",
-    # "phoenix",
-    # "team2",
-    # "inpay",
-    "hydra",
+    # "development-wakanda",
+    # "development-phoenix",
+    # "development-team2",
+    # "development-inpay",
+    "development-hydra",
 ]
 
 
@@ -95,27 +95,27 @@ def populate_project_queue():
         for branch_name in branch_names:
             project_queue.put(
                 {
-                    "team": branch_name,
+                    "branch": branch_name,
                     "project_name": project,
                     "project_id": project_names[project],
                 }
             )
 
 
-def create_branch(project_id, team_name):
+def create_branch(project_id, branch_name, base_branch):
     response = call_gitlab_api(
         "POST",
         HEADERS,
-        f"projects/{project_id}/repository/branches?branch=development-{team_name}&ref=development",
+        f"projects/{project_id}/repository/branches?branch={branch_name}&ref={base_branch}",
     )
     return response
 
 
-def create_pipeline(project_id, team_name):
+def create_pipeline(project_id, branch_name):
     response = call_gitlab_api(
         "POST",
         HEADERS,
-        f"projects/{project_id}/pipeline?ref=development-{team_name}",
+        f"projects/{project_id}/pipeline?ref={branch_name}",
     )
     return response
 
@@ -184,17 +184,17 @@ def execute():
             ):
                 project = project_queue.get()
                 # print(
-                #    f"Creating branch for team '{project['team']}' in '{project['project_name']}'"
+                #    f"Creating branch for branch '{project['branch']}' in '{project['project_name']}'"
                 # )
-                # create_branch(project["project_id"], project["team"])
+                # create_branch(project["project_id"], project["branch"], "development")
                 print(
-                    f"Creating pipeline for branch 'development-{project['team']}' in '{project['project_name']}'"
+                    f"Creating pipeline for branch '{project['branch']}' in '{project['project_name']}'"
                 )
                 create_pipeline_response = create_pipeline(
-                    project["project_id"], project["team"]
+                    project["project_id"], project["branch"]
                 )
                 project["pipeline_id"] = create_pipeline_response["body"]["id"]
-                execution_dict[f"{project['team']}/{project['project_name']}"] = project
+                execution_dict[f"{project['branch']}/{project['project_name']}"] = project
 
             # NOTE: wait for pipelines to run, otherwise calling the API might result in an error
             print("Waiting for pipelines to run...")
@@ -216,30 +216,30 @@ Current pipelines:""")
                 response = call_gitlab_api(
                     "GET",
                     HEADERS,
-                    # f"projects/{project['project_id']}/pipelines/latest?ref=development-{project['team']}",
+                    # f"projects/{project['project_id']}/pipelines/latest?ref={project['branch']}",
                     f"projects/{project['project_id']}/pipelines/{project['pipeline_id']}",
                 )
 
                 # NOTE: update overall status based on the current pipelines status
                 match response["body"]["status"]:
                     case "success":
-                        status_dict[project["team"]]["success"] += 1
+                        status_dict[project["branch"]]["success"] += 1
                         execution_done.append(execution)
                     case "skipped":
-                        status_dict[project["team"]]["skipped"] += 1
-                        status_dict[project["team"]]["skipped_pipelines"].append(
+                        status_dict[project["branch"]]["skipped"] += 1
+                        status_dict[project["branch"]]["skipped_pipelines"].append(
                             project["project_name"]
                         )
                         execution_done.append(execution)
                     case "canceled":
-                        status_dict[project["team"]]["canceled"] += 1
-                        status_dict[project["team"]]["canceled_pipelines"].append(
+                        status_dict[project["branch"]]["canceled"] += 1
+                        status_dict[project["branch"]]["canceled_pipelines"].append(
                             project["project_name"]
                         )
                         execution_done.append(execution)
                     case "failed":
-                        status_dict[project["team"]]["failed"] += 1
-                        status_dict[project["team"]]["failed_pipelines"].append(
+                        status_dict[project["branch"]]["failed"] += 1
+                        status_dict[project["branch"]]["failed_pipelines"].append(
                             project["project_name"]
                         )
                         execution_done.append(execution)
