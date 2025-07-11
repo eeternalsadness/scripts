@@ -75,20 +75,23 @@ branch_names = [
 ]
 
 
-def call_gitlab_api(method, headers, path):
+def call_gitlab_api(method, headers, path, max_retries=3, timeout=30):
     url = f"https://{GITLAB_HOST}/api/v4/{path}"
-    match method.lower():
-        case "get":
-            response = requests.get(url, headers=headers)
-        case "post":
-            response = requests.post(url, headers=headers)
-        case _:
-            raise Exception(f"Invalid method '{method}'!")
-
-    return {
-        "status_code": response.status_code,
-        "body": response.json(),
-    }
+    for attempt in range(max_retries):
+        try:
+            match method.lower():
+                case "get":
+                    response = requests.get(url, headers=headers, timeout=timeout)
+                case "post":
+                    response = requests.post(url, headers=headers, timeout=timeout)
+                case _:
+                    raise Exception(f"Invalid method '{method}'!")
+            response.raise_for_status()
+            return {"status_code": response.status_code, "body": response.json()}
+        except requests.exceptions.RequestException as e:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(2 ** attempt)  # Exponential backoff
 
 
 def populate_project_queue():
@@ -258,8 +261,13 @@ Current pipelines:""")
 
 
 def main():
-    populate_project_queue()
-    execute()
+    try:
+        populate_project_queue()
+        execute()
+        return 0
+    except Exception as e:
+        print(f"Pipeline execution failed: {e}")
+        return 1
 
 
 if __name__ == "__main__":
