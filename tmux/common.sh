@@ -9,14 +9,14 @@ new-workspace() {
     exit 1
   fi
 
-  # check if git repository exists
-  if [[ ! -d "$git_repo" ]]; then
-      echo "Repository directory does not exist: $git_repo" >&2
-      exit 1
-  fi
-
   session_name="Repo/$(format-session-name ${git_repo})"
   git_repo="${REPO}/${git_repo}"
+
+  # check if git repository exists
+  if [[ ! -d "$git_repo" ]]; then
+    echo "Repository directory does not exist: $git_repo" >&2
+    exit 1
+  fi
 
   # check if session already exists
   if tmux has-session -t "$session_name" 2>/dev/null; then
