@@ -7,12 +7,12 @@ if [[ -n "$TMUX" ]]; then
   exit 1
 fi
 
-# create ssh session if there isn't any
-if ! tmux has-session -t ssh; then
-  tmux new-session -d -s ssh -c "$OBSIDIAN"
-  tmux rename-window -t "ssh:1" "obsidian"
-  tmux send-keys -t "ssh:1" "nvim ." C-m
-  tmux new-window -t "ssh:2"
+# create common session if there isn't any
+if ! tmux has-session -t common; then
+  tmux new-session -d -s common -c "$OBSIDIAN"
+  tmux rename-window -t "common:1" "obsidian"
+  tmux send-keys -t "common:1" "nvim ." C-m
+  tmux new-window -t "common:2"
 fi
 
 # check if there's already a workspace session
