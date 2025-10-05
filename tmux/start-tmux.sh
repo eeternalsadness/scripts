@@ -8,7 +8,7 @@ if [[ -n "$TMUX" ]]; then
 fi
 
 # create common session if there isn't any
-if ! tmux has-session -t common; then
+if ! tmux has-session -t common >/dev/null 2>&1; then
   tmux new-session -d -s common -c "$HOME"
   tmux new-window -t "common:2" -n "obsidian" -c "$OBSIDIAN"
   tmux send-keys -t "common:2" "nvim ." C-m
