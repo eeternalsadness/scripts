@@ -40,7 +40,7 @@ new-workspace() {
 select-git-repo() {
   repo_escaped=$(echo "$REPO" | sed 's/\//\\\//g')
   # NOTE: don't use -type to look for both directories and files to make it work with git worktrees
-  repo_dir=$(find -L "$REPO" -maxdepth 3 -name ".git" | sed 's/\/\.git//' | sed "s/${repo_escaped}\///" | fzf --prompt "Select a git repo: ")
+  repo_dir=$(find -L "$REPO" -maxdepth 3 -name ".git" | sed 's/\/\.git//' | sed "s/${repo_escaped}\///" | fzf --tmux --prompt "Select a git repo: ")
 
   echo "$repo_dir"
 }
