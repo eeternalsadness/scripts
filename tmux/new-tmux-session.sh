@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $SCRIPTS/tmux/common.sh
+source "$SCRIPTS/tmux/common.sh"
 
 if [[ -z "$TMUX" ]]; then
   echo "Must be in a tmux session! Use 'ti' to start a new tmux session."

@@ -33,7 +33,7 @@ EOT
     daily_file_path="$OBSIDIAN/Periodic Notes/0-Daily/${daily_file_name}.md"
 
     if [[ ! -f "$daily_file_path" ]]; then
-      bash $SCRIPTS/obsidian/daily-note.sh
+      $SCRIPTS/obsidian/daily-note.sh
     fi
 
     [[ "$create_note_success" == 0 ]] && echo "[[$file_name]]" >>"$daily_file_path"

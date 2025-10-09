@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $SCRIPTS/tmux/common.sh
+source "$SCRIPTS/tmux/common.sh"
 
 if [[ -n "$TMUX" ]]; then
   echo "tmux already running!"

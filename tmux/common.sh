@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 new-workspace() {
   git_repo=$(select-git-repo)
 
