@@ -1,7 +1,5 @@
-#!/bin/bash
-
 get_devbox_env() {
-  local devbox_repo_dir="${1:-$HOME/Repo/personal/devbox}"
+  local devbox_repo_dir="${1:-$DEVBOX_REPO_DIR}"
   local prompt_msg="Select the devbox project to use: "
   local devbox_envs=()
   local devbox_env=""
