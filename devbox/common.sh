@@ -4,19 +4,15 @@ get_devbox_env() {
   local devbox_envs=()
   local devbox_env=""
 
-  if type fzf >/dev/null 2>&1; then
-    devbox_env=$(fzf --walker=dir --walker-root="$devbox_repo_dir" --prompt="$prompt_msg")
-  else
-    for dir in $devbox_repo_dir/*/; do
-      devbox_envs+=("$dir")
-    done
+  for dir in $devbox_repo_dir/*/; do
+    devbox_envs+=("$dir")
+  done
 
-    PS3="$prompt_msg"
-    select env in "${devbox_envs[@]}"; do
-      devbox_env="$env"
-      break
-    done
-  fi
+  PS3="$prompt_msg"
+  select env in "${devbox_envs[@]}"; do
+    devbox_env="$env"
+    break
+  done
 
   echo "$devbox_env"
 }
