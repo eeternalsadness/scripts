@@ -61,7 +61,7 @@ symlink_dotfiles "$dotfiles_dir" "$scripts_dir"
 source "$scripts_dir/devbox/common.sh"
 devbox_env=$(get_devbox_env "$devbox_dir")
 if [[ -n "$devbox_env" ]]; then
-  devbox install -c "${devbox_dir}/${devbox_env}"
+  devbox install -c "${devbox_env}"
 fi
 #devbox run -c $HOME install_jira
 
