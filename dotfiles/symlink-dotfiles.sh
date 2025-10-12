@@ -60,11 +60,6 @@ for file in "$dotfiles_dir"/.config/*; do
 
   target="$HOME/.config/$file_name"
 
-  # back up target dir if it exists
-  if [[ -d "$target" ]]; then
-    VERSION_CONTROL=t mv -bTv "$target" "${target}.backup"
-  fi
-
   # create symlink
   set +e
   symlink_target=$(readlink "$target")
@@ -72,6 +67,11 @@ for file in "$dotfiles_dir"/.config/*; do
   if [[ "$symlink_target" == "$file" ]]; then
     echo "Symlink '$target' -> '$symlink_target' already exists!"
   else
+    # back up target dir if it exists
+    if [[ -d "$target" ]]; then
+      VERSION_CONTROL=t mv -bTv "$target" "${target}.backup"
+    fi
+
     echo "Creating symlink for '$file' at '$target'"
     VERSION_CONTROL=t ln -sbv "$file" "$target"
   fi
