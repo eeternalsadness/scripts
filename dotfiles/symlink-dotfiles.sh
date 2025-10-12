@@ -49,7 +49,7 @@ if $link_dotfiles; then
 fi
 
 # symlink dirs in .config/
-read -rp "Link $HOME/.config? [y/n]: " user_input
+read -rp "Link .config directory? [y/n]: " user_input
 link_configs=false
 case "$user_input" in
 "y") link_configs=true ;;
