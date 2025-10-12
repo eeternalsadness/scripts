@@ -28,6 +28,17 @@ for dir in $devbox_dir/*/; do
 done
 
 ##############################################
+# Set up scripts
+##############################################
+
+if [[ ! -d "$scripts_dir" ]]; then
+  echo "Creating scripts dir at '$scripts_dir'"
+  mkdir -p "$scripts_dir"
+fi
+
+git clone "https://github.com/eeternalsadness/scripts.git" "$scripts_dir"
+
+##############################################
 # Set up dotfiles
 ##############################################
 
@@ -38,54 +49,8 @@ fi
 
 git clone "https://github.com/eeternalsadness/dotfiles.git" "$dotfiles_dir"
 
-# Symlink dotfiles
-echo "Linking dotfiles..."
-
-for file in $dotfiles_dir/.*; do
-  file_name=$(basename "$file")
-
-  # Ignore folders & special files
-  if [[ -d "$file" ]] || [[ "$file_name" == ".gitignore" ]]; then
-    continue
-  fi
-
-  target="$HOME/$file_name"
-
-  # Create symlink
-  echo "Creating symlink for '$file' at '$target'"
-  ln -sf "$file" "$target"
-done
-
-# Symlink dirs in .config/
-if [[ ! -d "$HOME/.config" ]]; then
-  mkdir "$HOME/.config"
-fi
-
-for file in $dotfiles_dir/.config/*; do
-  file_name=$(basename "$file")
-
-  # Ignore special files
-  if [[ "$file_name" == ".git" || "$file_name" == ".gitignore" ]]; then
-    continue
-  fi
-
-  target="$HOME/.config/$file_name"
-
-  # Create symlink
-  echo "Creating symlink for '$file' at '$target'"
-  ln -sf "$file" "$target"
-done
-
-##############################################
-# Set up scripts
-##############################################
-
-if [[ ! -d "$scripts_dir" ]]; then
-  echo "Creating scripts dir at '$scripts_dir'"
-  mkdir -p "$scripts_dir"
-fi
-
-git clone "https://github.com/eeternalsadness/scripts.git" "$scripts_dir"
+source "$scripts_dir/dotfiles/symlink-dotfiles.sh"
+symlink_dotfiles "$dotfiles_dir" "$scripts_dir"
 
 ##############################################
 # Run devbox install to finish setup
