@@ -51,8 +51,8 @@ fi
 
 git clone "https://github.com/eeternalsadness/dotfiles.git" "$dotfiles_dir"
 
-source "$scripts_dir/dotfiles/symlink-dotfiles.sh"
-symlink_dotfiles "$dotfiles_dir" "$scripts_dir"
+# symlink dotfiles
+"$scripts_dir"/dotfiles/symlink-dotfiles.sh "$dotfiles_dir" "$scripts_dir"
 
 ##############################################
 # Run devbox install to finish setup
