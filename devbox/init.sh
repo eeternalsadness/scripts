@@ -22,9 +22,11 @@ fi
 git clone "https://github.com/eeternalsadness/devbox.git" "$devbox_dir"
 
 # Init devbox projects
-for dir in $devbox_dir/*/; do
-  echo "Copying '${dir}/template.env' to '$dir/.env'"
-  cp "${dir}/template.env" "${dir}/.env"
+for dir in "$devbox_dir"/*; do
+  if [[ -d "$dir" ]]; then
+    echo "Copying '${dir}/template.env' to '$dir/.env'"
+    cp "${dir}/template.env" "${dir}/.env"
+  fi
 done
 
 ##############################################
