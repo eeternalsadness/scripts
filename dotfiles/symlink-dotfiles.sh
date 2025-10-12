@@ -10,9 +10,11 @@ echo_warning "This script will symlink all dotfiles in $dotfiles_dir to the home
 echo_warning "All directories in $dotfiles_dir/.config/ will also be symlinked to $HOME/.config/."
 echo_warning "All files and directories will be backed up (with versioning) by default."
 
-# symlink dotfiles
-read -rp "Link dotfiles? [y/n]: " user_input
+# user prompts
 link_dotfiles=false
+link_configs=false
+
+read -rp "Link dotfiles? [y/n]: " user_input
 case "$user_input" in
 "y") link_dotfiles=true ;;
 "n") ;;
@@ -22,6 +24,17 @@ case "$user_input" in
   ;;
 esac
 
+read -rp "Link .config directory? [y/n]: " user_input
+case "$user_input" in
+"y") link_configs=true ;;
+"n") ;;
+*)
+  echo_error "Invalid input: '$user_input'."
+  return 1
+  ;;
+esac
+
+# symlink dotfiles
 if $link_dotfiles; then
   echo "Linking dotfiles..."
 
@@ -49,17 +62,6 @@ if $link_dotfiles; then
 fi
 
 # symlink dirs in .config/
-read -rp "Link .config directory? [y/n]: " user_input
-link_configs=false
-case "$user_input" in
-"y") link_configs=true ;;
-"n") ;;
-*)
-  echo_error "Invalid input: '$user_input'."
-  return 1
-  ;;
-esac
-
 if $link_configs; then
   if [[ ! -d "$HOME/.config" ]]; then
     mkdir "$HOME/.config"
