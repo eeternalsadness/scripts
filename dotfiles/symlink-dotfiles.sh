@@ -33,7 +33,9 @@ symlink_dotfiles() {
     target="$HOME/$file_name"
 
     # create symlink with versioned backup
+    set +e
     symlink_target=$(readlink "$target")
+    set -e
     if [[ "$symlink_target" == "$file" ]]; then
       echo "Symlink '$target' -> '$symlink_target' already exists!"
     else
@@ -63,7 +65,9 @@ symlink_dotfiles() {
     fi
 
     # create symlink
+    set +e
     symlink_target=$(readlink "$target")
+    set -e
     if [[ "$symlink_target" == "$file" ]]; then
       echo "Symlink '$target' -> '$symlink_target' already exists!"
     else
