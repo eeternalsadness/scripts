@@ -63,7 +63,6 @@ devbox_env=$(get_devbox_env "$devbox_dir")
 if [[ -n "$devbox_env" ]]; then
   devbox install -c "${devbox_env}"
 fi
-#devbox run -c $HOME install_jira
 
 ##############################################
 # Reminders after script completion
