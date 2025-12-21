@@ -17,5 +17,5 @@ for file in "${files[@]}"; do
   dir_name=$(dirname "$file")
   new_path="${dir_name}/${new_name}"
 
-  mv $file "$new_path"
+  mv "$file" "$new_path"
 done
