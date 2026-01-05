@@ -8,7 +8,7 @@ if [[ ! -f "$file_path" ]]; then
   cat >"$file_path" <<EOT
 # ${file_name}
 
-<< [[$(date -d "last year" +"%Y-%m")]] | [[$(date -d "next year" +"%Y-%m")]] >>
+<< [[$(date -d "last year" +"%Y")]] | [[$(date -d "next year" +"%Y")]] >>
 
 ## $(date +"%Y") Resolutions
 
