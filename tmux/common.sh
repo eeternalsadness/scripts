@@ -17,7 +17,8 @@ new-workspace() {
   fi
 
   # check if session already exists
-  if tmux has-session -t "$session_name" 2>/dev/null; then
+  # use =SESSION_NAME for exact match
+  if tmux has-session -t "=${session_name}" 2>/dev/null; then
     echo "Session '$session_name' already exists!" >&2
     echo "Switching to session '$session_name'" >&2
     tmux switch -t "$session_name"
