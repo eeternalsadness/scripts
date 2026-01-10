@@ -9,8 +9,6 @@ while read -r file; do
 done < <(find "$notes_dir" -type f -name "$pattern")
 
 for file in "${files[@]}"; do
-  file_name=$(basename "$file")
-
   # use h1 for file name
   header=$(head -n 1 "$file" | sed 's/^# //')
   new_name="${header}.md"
