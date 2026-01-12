@@ -10,6 +10,6 @@ if [[ -z "$DEVBOX_SHELL_ENABLED" ]]; then
   else
     devbox shell -c "$devbox_env"
   fi
-elif [[ "$CALLER" == "dbs" ]]; then
+elif [[ "$1" == "dbs" ]]; then
   echo "Already in devbox shell!"
 fi
