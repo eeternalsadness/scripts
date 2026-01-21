@@ -28,4 +28,4 @@ chown -R ${ANSIBLE_USER}:${ANSIBLE_USER} /home/${ANSIBLE_USER}/.ssh
 
 # make sure python is installed
 echo "Making sure python exists"
-apt update && apt install -y python3
+apt-get update && apt-get install -y python3
