@@ -18,19 +18,14 @@ new-workspace() {
 
   # check if session already exists
   # use =SESSION_NAME for exact match
-  if tmux has-session -t "=${session_name}" 2>/dev/null; then
-    echo "Session '$session_name' already exists!" >&2
-    echo "Switching to session '$session_name'" >&2
-    tmux switch -t "$session_name"
-    exit 0
+  if ! tmux has-session -t "=${session_name}" 2>/dev/null; then
+    tmux new-session -d -s "$session_name" -c "$git_repo"
+    tmux rename-window -t "${session_name}:1" "repo"
+    tmux send-keys -t "${session_name}:1" "nvim ." C-m
+    tmux link-window -d -s "common:1" -t "${session_name}:2"
+    tmux new-window -t "${session_name}:3" -n "shell" -c "$git_repo"
+    tmux select-window -t "${session_name}:1"
   fi
-
-  tmux new-session -d -s "$session_name" -c "$git_repo"
-  tmux rename-window -t "${session_name}:1" "repo"
-  tmux send-keys -t "${session_name}:1" "nvim ." C-m
-  tmux link-window -d -s "common:1" -t "${session_name}:2"
-  tmux new-window -t "${session_name}:3" -n "shell" -c "$git_repo"
-  tmux select-window -t "${session_name}:1"
 
   echo "$session_name"
 }

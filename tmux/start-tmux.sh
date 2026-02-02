@@ -1,14 +1,16 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+set -eou pipefail
 
 source "$SCRIPTS/tmux/common.sh"
 
-if [[ -n "$TMUX" ]]; then
+if [[ -v "TMUX" ]]; then
   echo "tmux already running!"
   exit 1
 fi
 
 # create common session if there isn't any
-if ! tmux has-session -t =common >/dev/null 2>&1; then
+if ! tmux has-session -t =common 2>/dev/null; then
   tmux new-session -d -s common -c "$HOME"
   tmux new-window -t "common:2" -n "obsidian" -c "$OBSIDIAN"
   tmux send-keys -t "common:2" "nvim ." C-m
@@ -16,7 +18,7 @@ if ! tmux has-session -t =common >/dev/null 2>&1; then
 fi
 
 # check if there's already a workspace session
-current_workspaces=$(tmux ls -F "#S" | grep "Repo")
+current_workspaces=$(tmux ls -F "#S" | grep "^Repo/" || echo "")
 if [[ -z "$current_workspaces" ]]; then
   # create a new workspace if there's no workspace session
   session_name=$(new-workspace)

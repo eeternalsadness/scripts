@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+set -eou pipefail
 
 source "$SCRIPTS/tmux/common.sh"
 
