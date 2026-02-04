@@ -28,4 +28,6 @@ else
 fi
 
 # attach to session
-tmux attach-session -t "$session_name"
+if [[ -n "$session_name" ]]; then
+  tmux attach-session -t "$session_name"
+fi

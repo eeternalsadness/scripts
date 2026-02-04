@@ -4,7 +4,7 @@ new-workspace() {
   # check if a git repo was selected
   if [[ -z "$git_repo" ]]; then
     echo "Invalid selection!" >&2
-    exit 1
+    return
   fi
 
   session_name="Repo/$(format-session-name ${git_repo})"
@@ -13,7 +13,7 @@ new-workspace() {
   # check if git repository exists
   if [[ ! -d "$git_repo" ]]; then
     echo "Repository directory does not exist: $git_repo" >&2
-    exit 1
+    return
   fi
 
   # check if session already exists
@@ -33,7 +33,7 @@ new-workspace() {
 select-git-repo() {
   repo_escaped=$(echo "$REPO" | sed 's/\//\\\//g')
   # NOTE: don't use -type to look for both directories and files to make it work with git worktrees
-  repo_dir=$(find -L "$REPO" -maxdepth 3 -name ".git" | sed 's/\/\.git//' | sed "s/${repo_escaped}\///" | fzf --tmux --prompt "Select a git repo: ")
+  repo_dir=$(find -L "$REPO" -maxdepth 3 -name ".git" | sed 's/\/\.git//' | sed "s/${repo_escaped}\///" | fzf --tmux --prompt "Select a git repo: " || echo "")
 
   echo "$repo_dir"
 }
