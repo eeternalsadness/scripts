@@ -71,7 +71,7 @@ if $link_configs; then
     file_name=$(basename "$file")
 
     # ignore special files
-    if [[ "$file_name" == ".git" || "$file_name" == ".gitignore" ]]; then
+    if [[ "$file_name" == ".git" || "$file_name" == ".gitignore" || "$file_name" == "opencode" ]]; then
       continue
     fi
 
@@ -86,6 +86,32 @@ if $link_configs; then
     else
       # back up target dir if it exists
       if [[ -d "$target" ]]; then
+        VERSION_CONTROL=t mv -bTv "$target" "${target}.backup"
+      fi
+
+      echo "Creating symlink for '$file' at '$target'"
+      VERSION_CONTROL=t ln -sbv "$file" "$target"
+    fi
+  done
+fi
+
+# symlink opencode-specific files
+if $link_configs; then
+  echo "Linking opencode files..."
+
+  mkdir -p "$HOME/.config/opencode"
+
+  for file in "$dotfiles_dir"/.config/opencode/*; do
+    file_name=$(basename "$file")
+    target="$HOME/.config/opencode/$file_name"
+
+    set +e
+    symlink_target=$(readlink "$target")
+    set -e
+    if [[ "$symlink_target" == "$file" ]]; then
+      echo "Symlink '$target' -> '$symlink_target' already exists!"
+    else
+      if [[ -e "$target" ]]; then
         VERSION_CONTROL=t mv -bTv "$target" "${target}.backup"
       fi
 
