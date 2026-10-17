@@ -21,7 +21,7 @@ sudo pacman -S --needed --noconfirm bluez bluez-utils
 systemctl enable --now bluetooth.service
 
 # power management
-sudo pacman -S --needed --noconfirm cpupower brightnessctl
+sudo pacman -S --needed --noconfirm brightnessctl
 # allow non-root user to change brightness
 usermod -aG video bach
 cat 'ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chgrp video $sys$devpath/brightness", RUN+="/bin/chmod g+w $sys$devpath/brightness"' >/etc/udev/rules.d/backlight.rules
