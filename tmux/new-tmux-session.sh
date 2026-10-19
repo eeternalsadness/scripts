@@ -13,5 +13,5 @@ session_name=$(new-workspace)
 
 # switch to session
 if [[ -n "$session_name" ]]; then
-  tmux switch -t "$session_name"
+  tmux switch-client -t "$session_name"
 fi

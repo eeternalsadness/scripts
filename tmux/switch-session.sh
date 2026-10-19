@@ -7,5 +7,5 @@ session_name=$(tmux ls -F "#S" | fzf --tmux --prompt "Select a session to switch
 
 # switch to selected session if it's different from current session
 if [[ -n "$session_name" ]] && [[ "$session_name" != "$current_session" ]]; then
-  tmux switch -t "$session_name"
+  tmux switch-client -t "$session_name"
 fi
